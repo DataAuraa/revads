@@ -31,6 +31,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initUseCaseCards();
   initThreatCards();
   initExperimentCards();
+  initProjectCards();
   initAccordions();
   initSearchFilter();
   initFeedbackForm();
@@ -298,6 +299,30 @@ function initExperimentCards() {
       document.querySelectorAll('.experiment-card-body').forEach(b => b.style.display = 'none');
       document.querySelectorAll('.experiment-card-header').forEach(h => h.classList.remove('active'));
       if (!isOpen) { body.style.display = 'block'; header.classList.add('active'); }
+    });
+  });
+}
+
+// ── Mini project cards ───────────────────────────────────────────────────────
+function initProjectCards() {
+  document.querySelectorAll('.project-card-header').forEach(header => {
+    const body = header.nextElementSibling;
+    if (!body || !body.classList.contains('project-card-body')) return;
+    body.style.display = 'none';
+    header.addEventListener('click', () => {
+      const isOpen = body.style.display !== 'none';
+      document.querySelectorAll('.project-card-body').forEach(b => b.style.display = 'none');
+      document.querySelectorAll('.project-card-header').forEach(h => {
+        h.classList.remove('active');
+        const ch = h.querySelector('.project-card-chevron');
+        if (ch) ch.textContent = 'View Details ▾';
+      });
+      if (!isOpen) {
+        body.style.display = 'block';
+        header.classList.add('active');
+        const ch = header.querySelector('.project-card-chevron');
+        if (ch) ch.textContent = 'Hide Details ▴';
+      }
     });
   });
 }

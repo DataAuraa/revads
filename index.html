@@ -1124,74 +1124,225 @@
 ───────────────────────────────────────────────────────────────────── -->
 <div id="section-mini-projects" style="display:none">
   <div class="section-title">💡 Mini Projects</div>
-  <div class="section-subtitle">8 Federated Learning project ideas for FDP participants</div>
+  <div class="section-subtitle">8 Federated Learning project ideas for FDP participants — click any card to view detailed specifications</div>
   <div class="grid-2" style="gap:16px">
+
+    <!-- Project 1 -->
     <div class="project-card">
-      <div class="project-card-icon">🏥</div>
-      <div class="project-card-title">Federated Healthcare Prediction</div>
-      <div class="project-card-meta"><span class="badge badge-red">Healthcare</span><span class="badge badge-yellow">Medium</span><span class="badge badge-blue">DP</span></div>
-      <p style="font-size:12px;color:var(--text-secondary)">Multiple hospitals collaboratively train a patient readmission prediction model without sharing patient records. Each hospital trains locally on its patient data.</p>
-      <div class="project-section-title">Suggested Dataset</div><p style="font-size:12px;color:var(--text-secondary)">MIMIC-III (clinical, requires application), UCI Heart Disease, or synthetic patient data</p>
-      <div class="project-section-title">FL Approach</div><p style="font-size:12px;color:var(--text-secondary)">Cross-silo FL with 5 hospital clients, FedAvg aggregation, ε=1.0 differential privacy</p>
-      <div class="project-section-title">Evaluation</div><p style="font-size:12px;color:var(--text-secondary)">AUC-ROC, F1-score, privacy budget consumption, communication cost</p>
+      <div class="project-card-header">
+        <div class="project-card-top">
+          <div class="project-card-icon">🏥</div>
+          <span class="project-card-chevron">View Details ▾</span>
+        </div>
+        <div class="project-card-title">Federated Healthcare Prediction</div>
+        <div class="project-card-meta"><span class="badge badge-red">Healthcare</span><span class="badge badge-yellow">Medium</span><span class="badge badge-blue">DP</span></div>
+        <p style="font-size:12px;color:var(--text-secondary);margin:0">Multiple hospitals collaboratively train a patient readmission prediction model without sharing patient records.</p>
+      </div>
+      <div class="project-card-body">
+        <div class="project-section-title">🎯 Project Overview & Objective</div>
+        <p style="font-size:12px;color:var(--text-secondary)">Hospitals maintain siloed Electronic Health Records (EHR) governed by strict HIPAA/GDPR regulations. This project trains a shared predictive model across 5 clinical sites to forecast 30-day patient readmission risks while strictly confining patient micro-data to local secure enclaves.</p>
+        <div class="project-section-title">📦 Suggested Dataset</div>
+        <p style="font-size:12px;color:var(--text-secondary)">MIMIC-III clinical records (PhysioNet credentialed), UCI Heart Disease, or synthetically partitioned patient cohorts.</p>
+        <div class="project-section-title">🔧 FL Architecture & Approach</div>
+        <p style="font-size:12px;color:var(--text-secondary)">Cross-silo FL topology with FedAvg/FedProx aggregation, Client-level Differential Privacy (ε=1.0, δ=10⁻⁵) and local gradient clipping.</p>
+        <div class="project-section-title">📊 Evaluation Metrics</div>
+        <p style="font-size:12px;color:var(--text-secondary)">AUC-ROC, Sensitivity/Specificity trade-off, Cumulative Epsilon Budget consumed, and communication efficiency per round.</p>
+        <div style="margin-top:14px;display:flex;gap:8px;flex-wrap:wrap">
+          <button class="btn btn-primary btn-sm" data-goto="fl-lab">⚙️ Open FL Lab</button>
+          <button class="btn btn-secondary btn-sm" data-goto="python-lab">🐍 Python DP Demo</button>
+        </div>
+      </div>
     </div>
+
+    <!-- Project 2 -->
     <div class="project-card">
-      <div class="project-card-icon">💳</div>
-      <div class="project-card-title">Federated Fraud Detection</div>
-      <div class="project-card-meta"><span class="badge badge-yellow">Finance</span><span class="badge badge-green">Beginner</span><span class="badge badge-blue">SecAgg</span></div>
-      <p style="font-size:12px;color:var(--text-secondary)">Banks collaborate to improve fraud detection without sharing customer transaction data. Cross-institution fraud patterns are captured through federated model updates.</p>
-      <div class="project-section-title">Suggested Dataset</div><p style="font-size:12px;color:var(--text-secondary)">Kaggle Credit Card Fraud Detection dataset (split among 5 simulated banks)</p>
-      <div class="project-section-title">FL Approach</div><p style="font-size:12px;color:var(--text-secondary)">Cross-silo FL, Random Forest or XGBoost with FL wrapper, class imbalance handling</p>
-      <div class="project-section-title">Evaluation</div><p style="font-size:12px;color:var(--text-secondary)">Precision, Recall, F1 for fraud class, False Positive Rate, communication efficiency</p>
+      <div class="project-card-header">
+        <div class="project-card-top">
+          <div class="project-card-icon">💳</div>
+          <span class="project-card-chevron">View Details ▾</span>
+        </div>
+        <div class="project-card-title">Federated Fraud Detection</div>
+        <div class="project-card-meta"><span class="badge badge-yellow">Finance</span><span class="badge badge-green">Beginner</span><span class="badge badge-blue">SecAgg</span></div>
+        <p style="font-size:12px;color:var(--text-secondary);margin:0">Banks collaborate to improve fraud detection without sharing customer transaction data.</p>
+      </div>
+      <div class="project-card-body">
+        <div class="project-section-title">🎯 Project Overview & Objective</div>
+        <p style="font-size:12px;color:var(--text-secondary)">Financial institutions face evolving cross-border fraud syndicates. Individual banks observe sparse fraud cases. Federated training aggregates cross-institutional threat indicators into a robust anomaly detector without exposing proprietary customer balances or transaction histories.</p>
+        <div class="project-section-title">📦 Suggested Dataset</div>
+        <p style="font-size:12px;color:var(--text-secondary)">Kaggle Credit Card Fraud Detection benchmark (284,807 transactions with severe class skew) partitioned Non-IID across 5 simulated financial institutions.</p>
+        <div class="project-section-title">🔧 FL Architecture & Approach</div>
+        <p style="font-size:12px;color:var(--text-secondary)">Cross-silo FL with Secure Aggregation (SecAgg masking), focal loss to mitigate class imbalance, and Byzantine-robust FedMedian.</p>
+        <div class="project-section-title">📊 Evaluation Metrics</div>
+        <p style="font-size:12px;color:var(--text-secondary)">Precision, Recall, AUPRC (Area Under Precision-Recall Curve), False Positive Alarm Rate, and cryptographic overhead.</p>
+        <div style="margin-top:14px;display:flex;gap:8px;flex-wrap:wrap">
+          <button class="btn btn-primary btn-sm" data-goto="fl-lab">⚙️ Open FL Lab</button>
+          <button class="btn btn-secondary btn-sm" data-goto="python-lab">🐍 View Baseline Code</button>
+        </div>
+      </div>
     </div>
+
+    <!-- Project 3 -->
     <div class="project-card">
-      <div class="project-card-icon">🌡️</div>
-      <div class="project-card-title">Federated IoT Anomaly Detection</div>
-      <div class="project-card-meta"><span class="badge badge-green">IoT</span><span class="badge badge-green">Beginner</span><span class="badge badge-cyan">Edge FL</span></div>
-      <p style="font-size:12px;color:var(--text-secondary)">Industrial IoT sensors collaboratively detect equipment failure without sending raw sensor streams to the cloud. Edge FL enables low-latency responses.</p>
-      <div class="project-section-title">Suggested Dataset</div><p style="font-size:12px;color:var(--text-secondary)">UNSW-NB15, KDD Cup 1999, or simulate IoT sensor readings with numpy</p>
-      <div class="project-section-title">FL Approach</div><p style="font-size:12px;color:var(--text-secondary)">Cross-device FL simulation, autoencoder or isolation forest, local anomaly thresholds</p>
+      <div class="project-card-header">
+        <div class="project-card-top">
+          <div class="project-card-icon">🌡️</div>
+          <span class="project-card-chevron">View Details ▾</span>
+        </div>
+        <div class="project-card-title">Federated IoT Anomaly Detection</div>
+        <div class="project-card-meta"><span class="badge badge-green">IoT</span><span class="badge badge-green">Beginner</span><span class="badge badge-cyan">Edge FL</span></div>
+        <p style="font-size:12px;color:var(--text-secondary);margin:0">Industrial IoT sensors collaboratively detect equipment failure without streaming raw telemetry to the cloud.</p>
+      </div>
+      <div class="project-card-body">
+        <div class="project-section-title">🎯 Project Overview & Objective</div>
+        <p style="font-size:12px;color:var(--text-secondary)">High-frequency sensor telemetry saturates industrial uplink bandwidth and exposes factory IP. Edge FL enables distributed machine monitors to collaboratively optimize predictive maintenance autoencoders on microcontrollers.</p>
+        <div class="project-section-title">📦 Suggested Dataset</div>
+        <p style="font-size:12px;color:var(--text-secondary)">UNSW-NB15, NASA Turbofan Engine Degradation Simulation Dataset (C-MAPSS), or synthetic IoT vibration telemetry.</p>
+        <div class="project-section-title">🔧 FL Architecture & Approach</div>
+        <p style="font-size:12px;color:var(--text-secondary)">Hierarchical Edge FL with local lightweight autoencoders, Top-K gradient sparsification (90% compression), and periodic regional aggregation.</p>
+        <div class="project-section-title">📊 Evaluation Metrics</div>
+        <p style="font-size:12px;color:var(--text-secondary)">Mean Time to Detect (MTTD), reconstruction error MSE, bandwidth reduction ratio (MB saved), and edge compute battery overhead.</p>
+        <div style="margin-top:14px;display:flex;gap:8px;flex-wrap:wrap">
+          <button class="btn btn-primary btn-sm" data-goto="fl-lab">⚙️ Test in Simulator</button>
+          <button class="btn btn-secondary btn-sm" data-goto="day2">📡 Comm. Efficiency Tool</button>
+        </div>
+      </div>
     </div>
+
+    <!-- Project 4 -->
     <div class="project-card">
-      <div class="project-card-icon">🎓</div>
-      <div class="project-card-title">Federated Student Performance Prediction</div>
-      <div class="project-card-meta"><span class="badge badge-blue">Education</span><span class="badge badge-green">Beginner</span><span class="badge badge-blue">DP</span></div>
-      <p style="font-size:12px;color:var(--text-secondary)">Universities collaboratively predict student performance and identify at-risk students without sharing student records across institutions.</p>
-      <div class="project-section-title">Suggested Dataset</div><p style="font-size:12px;color:var(--text-secondary)">UCI Student Performance (split into 3 simulated universities), Open University Learning Analytics</p>
-      <div class="project-section-title">FL Approach</div><p style="font-size:12px;color:var(--text-secondary)">Cross-silo FL, Logistic Regression or MLP, FERPA-compliant with DP</p>
+      <div class="project-card-header">
+        <div class="project-card-top">
+          <div class="project-card-icon">🎓</div>
+          <span class="project-card-chevron">View Details ▾</span>
+        </div>
+        <div class="project-card-title">Federated Student Performance Prediction</div>
+        <div class="project-card-meta"><span class="badge badge-blue">Education</span><span class="badge badge-green">Beginner</span><span class="badge badge-blue">DP</span></div>
+        <p style="font-size:12px;color:var(--text-secondary);margin:0">Universities collaboratively predict student performance and identify at-risk students with FERPA compliance.</p>
+      </div>
+      <div class="project-card-body">
+        <div class="project-section-title">🎯 Project Overview & Objective</div>
+        <p style="font-size:12px;color:var(--text-secondary)">Educational institutions cannot centralize student transcripts and demographic logs due to FERPA regulations. This project trains an early warning system to identify learners needing academic mentoring across participating universities.</p>
+        <div class="project-section-title">📦 Suggested Dataset</div>
+        <p style="font-size:12px;color:var(--text-secondary)">UCI Student Performance dataset (academics, social factors), Open University Learning Analytics Dataset (OULAD).</p>
+        <div class="project-section-title">🔧 FL Architecture & Approach</div>
+        <p style="font-size:12px;color:var(--text-secondary)">Cross-silo FL among 3 academic partner nodes, multi-layer perceptron with local feature normalization, and Rényi Differential Privacy.</p>
+        <div class="project-section-title">📊 Evaluation Metrics</div>
+        <p style="font-size:12px;color:var(--text-secondary)">Early-warning F1-score at mid-semester, demographic subgroup fairness disparity (Equalized Odds), privacy preservation guarantees.</p>
+        <div style="margin-top:14px;display:flex;gap:8px;flex-wrap:wrap">
+          <button class="btn btn-primary btn-sm" data-goto="fl-lab">⚙️ Launch FL Lab</button>
+          <button class="btn btn-secondary btn-sm" data-goto="quiz">❓ Test FL Concepts</button>
+        </div>
+      </div>
     </div>
+
+    <!-- Project 5 -->
     <div class="project-card">
-      <div class="project-card-icon">💬</div>
-      <div class="project-card-title">Federated Sentiment Analysis</div>
-      <div class="project-card-meta"><span class="badge badge-purple">NLP</span><span class="badge badge-yellow">Medium</span><span class="badge badge-blue">DP</span></div>
-      <p style="font-size:12px;color:var(--text-secondary)">Multiple organizations (news outlets, social platforms) collaboratively train a sentiment classifier without sharing user-generated content.</p>
-      <div class="project-section-title">Suggested Dataset</div><p style="font-size:12px;color:var(--text-secondary)">IMDB Reviews, Twitter Sentiment140, Amazon Reviews (split by domain/source)</p>
-      <div class="project-section-title">FL Approach</div><p style="font-size:12px;color:var(--text-secondary)">Cross-silo FL with TF-IDF + Logistic Regression or DistilBERT fine-tuning (advanced)</p>
+      <div class="project-card-header">
+        <div class="project-card-top">
+          <div class="project-card-icon">💬</div>
+          <span class="project-card-chevron">View Details ▾</span>
+        </div>
+        <div class="project-card-title">Federated Sentiment Analysis</div>
+        <div class="project-card-meta"><span class="badge badge-purple">NLP</span><span class="badge badge-yellow">Medium</span><span class="badge badge-blue">DP</span></div>
+        <p style="font-size:12px;color:var(--text-secondary);margin:0">Collaboratively train text sentiment models without centralizing user-generated messages or private transcripts.</p>
+      </div>
+      <div class="project-card-body">
+        <div class="project-section-title">🎯 Project Overview & Objective</div>
+        <p style="font-size:12px;color:var(--text-secondary)">Customer support forums, healthcare feedback portals, and internal communication channels contain sensitive user prose. This project fine-tunes sentiment classification models across distributed platforms without uploading raw text.</p>
+        <div class="project-section-title">📦 Suggested Dataset</div>
+        <p style="font-size:12px;color:var(--text-secondary)">IMDb Reviews, Twitter Sentiment140, Amazon Multi-domain Sentiment subsets partitioned with topic distribution skew.</p>
+        <div class="project-section-title">🔧 FL Architecture & Approach</div>
+        <p style="font-size:12px;color:var(--text-secondary)">Federated fine-tuning with Parameter-Efficient Fine-Tuning (LoRA / adapter modules) over DistilBERT or TF-IDF representations with FedProx aggregation.</p>
+        <div class="project-section-title">📊 Evaluation Metrics</div>
+        <p style="font-size:12px;color:var(--text-secondary)">Macro-F1, generalization across unseen client slang/vocabularies, parameter communication payload (MB), inference speed.</p>
+        <div style="margin-top:14px;display:flex;gap:8px;flex-wrap:wrap">
+          <button class="btn btn-primary btn-sm" data-goto="python-lab">🐍 Code Lab Demos</button>
+          <button class="btn btn-secondary btn-sm" data-goto="research">🔭 Explore Research</button>
+        </div>
+      </div>
     </div>
+
+    <!-- Project 6 -->
     <div class="project-card">
-      <div class="project-card-icon">🖼️</div>
-      <div class="project-card-title">Federated Image Classification</div>
-      <div class="project-card-meta"><span class="badge badge-cyan">Vision</span><span class="badge badge-yellow">Medium</span><span class="badge badge-blue">FedAvg</span></div>
-      <p style="font-size:12px;color:var(--text-secondary)">Simulate FL on MNIST or CIFAR-10 across multiple clients with IID and Non-IID splits. Compare with centralized CNN baseline.</p>
-      <div class="project-section-title">Suggested Dataset</div><p style="font-size:12px;color:var(--text-secondary)">MNIST (handwritten digits), Fashion-MNIST, CIFAR-10 (split into 10 clients)</p>
-      <div class="project-section-title">FL Approach</div><p style="font-size:12px;color:var(--text-secondary)">Cross-device FL simulation, Simple CNN with PyTorch/TensorFlow, compare IID vs Non-IID</p>
+      <div class="project-card-header">
+        <div class="project-card-top">
+          <div class="project-card-icon">🖼️</div>
+          <span class="project-card-chevron">View Details ▾</span>
+        </div>
+        <div class="project-card-title">Federated Image Classification</div>
+        <div class="project-card-meta"><span class="badge badge-cyan">Vision</span><span class="badge badge-yellow">Medium</span><span class="badge badge-blue">FedAvg</span></div>
+        <p style="font-size:12px;color:var(--text-secondary);margin:0">Simulate visual model training on distributed edge devices with severe IID and Non-IID Dirichlet label skew.</p>
+      </div>
+      <div class="project-card-body">
+        <div class="project-section-title">🎯 Project Overview & Objective</div>
+        <p style="font-size:12px;color:var(--text-secondary)">Edge cameras and smartphones take diverse photos. This benchmark evaluates how CNN architectures converge when each device captures only 1 or 2 distinct classes (extreme Non-IID client drift), verifying FedAvg versus FedProx stabilization.</p>
+        <div class="project-section-title">📦 Suggested Dataset</div>
+        <p style="font-size:12px;color:var(--text-secondary)">MNIST digits, Fashion-MNIST, CIFAR-10, or Fed-Camelyon17 histopathology image patches.</p>
+        <div class="project-section-title">🔧 FL Architecture & Approach</div>
+        <p style="font-size:12px;color:var(--text-secondary)">Convolutional Neural Network (CNN) with 10 simulated clients, Dirichlet distribution (α=0.1 for high Non-IID vs α=10.0 for near-IID), FedAvg aggregation.</p>
+        <div class="project-section-title">📊 Evaluation Metrics</div>
+        <p style="font-size:12px;color:var(--text-secondary)">Top-1 accuracy per communication round, client drift variance, loss convergence curves, and communication cost.</p>
+        <div style="margin-top:14px;display:flex;gap:8px;flex-wrap:wrap">
+          <button class="btn btn-primary btn-sm" data-goto="fl-lab">⚙️ Run Non-IID Sim</button>
+          <button class="btn btn-secondary btn-sm" data-goto="python-lab">🐍 Python FedAvg Demo</button>
+        </div>
+      </div>
     </div>
+
+    <!-- Project 7 -->
     <div class="project-card">
-      <div class="project-card-icon">🎯</div>
-      <div class="project-card-title">Privacy-Preserving Recommendation System</div>
-      <div class="project-card-meta"><span class="badge badge-yellow">RecSys</span><span class="badge badge-red">Advanced</span><span class="badge badge-red">HE/DP</span></div>
-      <p style="font-size:12px;color:var(--text-secondary)">Build a federated collaborative filtering system where user preferences never leave their devices. Ratings are kept private while the model improves globally.</p>
-      <div class="project-section-title">Suggested Dataset</div><p style="font-size:12px;color:var(--text-secondary)">MovieLens 100K (split users into clients), Book Ratings dataset</p>
-      <div class="project-section-title">FL Approach</div><p style="font-size:12px;color:var(--text-secondary)">Federated Matrix Factorization, local user embeddings, server aggregates item embeddings</p>
+      <div class="project-card-header">
+        <div class="project-card-top">
+          <div class="project-card-icon">🎯</div>
+          <span class="project-card-chevron">View Details ▾</span>
+        </div>
+        <div class="project-card-title">Privacy-Preserving Recommendation System</div>
+        <div class="project-card-meta"><span class="badge badge-yellow">RecSys</span><span class="badge badge-red">Advanced</span><span class="badge badge-red">HE/DP</span></div>
+        <p style="font-size:12px;color:var(--text-secondary);margin:0">Build a collaborative filtering engine where user ratings and browsing habits remain strictly on-device.</p>
+      </div>
+      <div class="project-card-body">
+        <div class="project-section-title">🎯 Project Overview & Objective</div>
+        <p style="font-size:12px;color:var(--text-secondary)">Centralizing watch histories and user ratings compromises consumer privacy and risks de-anonymization. This architecture trains a federated matrix factorization engine where user preference vectors are updated strictly on-device, only aggregated item latent embeddings travel across the network.</p>
+        <div class="project-section-title">📦 Suggested Dataset</div>
+        <p style="font-size:12px;color:var(--text-secondary)">MovieLens 100K / 1M, Book-Crossing dataset, or GoodReads interactions partitioned by user ID.</p>
+        <div class="project-section-title">🔧 FL Architecture & Approach</div>
+        <p style="font-size:12px;color:var(--text-secondary)">Federated Collaborative Filtering (FedMF) with local SGD, Homomorphic Encryption (Paillier) or SecAgg to mask gradient exchanges.</p>
+        <div class="project-section-title">📊 Evaluation Metrics</div>
+        <p style="font-size:12px;color:var(--text-secondary)">Root Mean Squared Error (RMSE), Normalized Discounted Cumulative Gain (NDCG@10), Hit Ratio, encryption computation latency.</p>
+        <div style="margin-top:14px;display:flex;gap:8px;flex-wrap:wrap">
+          <button class="btn btn-primary btn-sm" data-goto="day2">🔐 Homomorphic Enc. Demo</button>
+          <button class="btn btn-secondary btn-sm" data-goto="research">🔭 RecSys Research</button>
+        </div>
+      </div>
     </div>
+
+    <!-- Project 8 -->
     <div class="project-card">
-      <div class="project-card-icon">🔐</div>
-      <div class="project-card-title">Federated Intrusion Detection System</div>
-      <div class="project-card-meta"><span class="badge badge-red">Security</span><span class="badge badge-yellow">Medium</span><span class="badge badge-blue">SecAgg</span></div>
-      <p style="font-size:12px;color:var(--text-secondary)">Organizations collaboratively build a network intrusion detection model without sharing sensitive network traffic logs. Threat intelligence is shared through model updates.</p>
-      <div class="project-section-title">Suggested Dataset</div><p style="font-size:12px;color:var(--text-secondary)">CICIDS2017, NSL-KDD, UNSW-NB15 (split by organization type)</p>
-      <div class="project-section-title">FL Approach</div><p style="font-size:12px;color:var(--text-secondary)">Cross-silo FL, Random Forest or LSTM for sequence anomalies, Byzantine-robust aggregation</p>
+      <div class="project-card-header">
+        <div class="project-card-top">
+          <div class="project-card-icon">🔐</div>
+          <span class="project-card-chevron">View Details ▾</span>
+        </div>
+        <div class="project-card-title">Federated Intrusion Detection System</div>
+        <div class="project-card-meta"><span class="badge badge-red">Security</span><span class="badge badge-yellow">Medium</span><span class="badge badge-blue">SecAgg</span></div>
+        <p style="font-size:12px;color:var(--text-secondary);margin:0">Enterprises collaboratively train cybersecurity threat classifiers without revealing network packet dumps.</p>
+      </div>
+      <div class="project-card-body">
+        <div class="project-section-title">🎯 Project Overview & Objective</div>
+        <p style="font-size:12px;color:var(--text-secondary)">Network PCAP logs contain corporate secrets, confidential IPs, and employee credentials. Participating corporate security operations centers (SOCs) collaboratively train an intrusion detection classifier to spot zero-day exploits while keeping packet logs private.</p>
+        <div class="project-section-title">📦 Suggested Dataset</div>
+        <p style="font-size:12px;color:var(--text-secondary)">CICIDS2017, NSL-KDD, UNSW-NB15 partitioned across different industry enterprise profiles.</p>
+        <div class="project-section-title">🔧 FL Architecture & Approach</div>
+        <p style="font-size:12px;color:var(--text-secondary)">Cross-silo FL with Byzantine-resilient aggregation (Trimmed Mean / Krum) to counter poisoning attempts by rogue or compromised SOC nodes, paired with Secure Aggregation.</p>
+        <div class="project-section-title">📊 Evaluation Metrics</div>
+        <p style="font-size:12px;color:var(--text-secondary)">Attack Detection Rate (DR), False Alarm Rate (FAR), robustness under 20% simulated malicious poisoning updates, aggregation latency.</p>
+        <div style="margin-top:14px;display:flex;gap:8px;flex-wrap:wrap">
+          <button class="btn btn-primary btn-sm" data-goto="day2">⚠️ Explore Threat Models</button>
+          <button class="btn btn-secondary btn-sm" data-goto="fl-lab">⚙️ Open FL Lab</button>
+        </div>
+      </div>
     </div>
+
   </div>
 </div>
 
