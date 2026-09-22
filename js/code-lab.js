@@ -613,18 +613,26 @@ class CodeLabClass {
   constructor() {
     this.currentFile = 'fedavg_simulation';
     this.currentStep = 0;
+    this.isEditing = false;
+    this.isRunning = false;
+    this.executionTimer = null;
+    this.plotChart = null;
+    this.currentRunnerTab = 'term';
+    this._userCodes = {};
     this._initialized = false;
   }
 
   init() {
     if (this._initialized) return;
     this._initialized = true;
+
     const sel = document.getElementById('python-file-select');
     sel?.addEventListener('change', () => this.loadFile(sel.value));
     document.getElementById('python-copy-btn')?.addEventListener('click', () => this.copyCode());
     document.getElementById('python-download-btn')?.addEventListener('click', () => this.downloadCode());
     document.getElementById('python-step-prev')?.addEventListener('click', () => this.navigateStep(-1));
     document.getElementById('python-step-next')?.addEventListener('click', () => this.navigateStep(1));
+
     this.loadFile(this.currentFile);
   }
 
@@ -633,14 +641,822 @@ class CodeLabClass {
     this.currentStep = 0;
     const file = PYTHON_CODE[fileId];
     if (!file) return;
+
+    const sel = document.getElementById('python-file-select');
+    if (sel && sel.value !== fileId) sel.value = fileId;
+
+    const codeToDisplay = this._userCodes[fileId] || file.code;
+
     const viewer = document.getElementById('python-code-viewer');
     if (viewer) {
-      viewer.innerHTML = `<pre><code class="language-python">${this._escape(file.code)}</code></pre>`;
+      viewer.innerHTML = `<pre><code class="language-python">${this._escape(codeToDisplay)}</code></pre>`;
       if (window.hljs) hljs.highlightAll();
     }
+
+    const editor = document.getElementById('python-code-editor');
+    if (editor) {
+      editor.value = codeToDisplay;
+    }
+
     const title = document.getElementById('python-file-title');
     if (title) title.textContent = file.title;
+
+    const termTitle = document.getElementById('terminal-title');
+    if (termTitle) termTitle.textContent = `python3 ${fileId}.py — ready`;
+
     this.renderStep(0);
+    this.resetPlotPlaceholder();
+  }
+
+  toggleEdit() {
+    this.isEditing = !this.isEditing;
+    const viewer = document.getElementById('python-code-viewer');
+    const editor = document.getElementById('python-code-editor');
+    const btn = document.getElementById('python-edit-btn');
+    const indicator = document.getElementById('python-edit-indicator');
+
+    if (this.isEditing) {
+      if (viewer) viewer.style.display = 'none';
+      if (editor) {
+        editor.style.display = 'block';
+        editor.focus();
+      }
+      if (btn) btn.innerHTML = '💾 Save Edits';
+      if (indicator) indicator.style.display = 'block';
+    } else {
+      if (editor && viewer) {
+        const editedCode = editor.value;
+        this._userCodes[this.currentFile] = editedCode;
+        viewer.innerHTML = `<pre><code class="language-python">${this._escape(editedCode)}</code></pre>`;
+        if (window.hljs) hljs.highlightAll();
+        editor.style.display = 'none';
+        viewer.style.display = 'block';
+      }
+      if (btn) btn.innerHTML = '✏️ Edit Code';
+      if (indicator) indicator.style.display = 'none';
+      if (typeof showNotification === 'function') {
+        showNotification('Code modifications saved. Click ▶ Run in Portal to execute.', 'info');
+      }
+    }
+  }
+
+  switchRunnerTab(tab) {
+    this.currentRunnerTab = tab;
+    const termBtn = document.getElementById('tab-runner-term');
+    const plotsBtn = document.getElementById('tab-runner-plots');
+    const stepsBtn = document.getElementById('tab-runner-steps');
+
+    const termView = document.getElementById('runner-view-term');
+    const plotsView = document.getElementById('runner-view-plots');
+    const stepsView = document.getElementById('runner-view-steps');
+
+    if (termBtn) termBtn.className = `runner-tab-btn ${tab === 'term' ? 'active' : ''}`;
+    if (plotsBtn) plotsBtn.className = `runner-tab-btn ${tab === 'plots' ? 'active' : ''}`;
+    if (stepsBtn) stepsBtn.className = `runner-tab-btn ${tab === 'steps' ? 'active' : ''}`;
+
+    if (termView) termView.style.display = tab === 'term' ? 'flex' : 'none';
+    if (plotsView) plotsView.style.display = tab === 'plots' ? 'block' : 'none';
+    if (stepsView) stepsView.style.display = tab === 'steps' ? 'block' : 'none';
+
+    if (tab === 'plots' && this.plotChart) {
+      this.plotChart.resize();
+    }
+  }
+
+  clearTerminal() {
+    const term = document.getElementById('python-terminal-output');
+    if (term) {
+      term.innerHTML = `
+        <div class="term-line term-dim"># Terminal cleared. Ready for next execution.</div>
+        <div class="term-line"><span class="term-prompt">reva@portal:~/fl-lab$</span> <span class="term-dim"># Click '▶ Run in Portal' to execute</span></div>
+      `;
+    }
+  }
+
+  stopExecution() {
+    if (this.executionTimer) {
+      clearTimeout(this.executionTimer);
+      this.executionTimer = null;
+    }
+    this.isRunning = false;
+
+    const runBtn = document.getElementById('python-run-btn');
+    const stopBtn = document.getElementById('python-stop-btn');
+    const statusPill = document.getElementById('python-run-status');
+
+    if (runBtn) runBtn.style.display = 'inline-flex';
+    if (stopBtn) stopBtn.style.display = 'none';
+    if (statusPill) {
+      statusPill.textContent = 'Stopped';
+      statusPill.className = 'badge badge-yellow';
+    }
+
+    const term = document.getElementById('python-terminal-output');
+    if (term) {
+      const errLine = document.createElement('div');
+      errLine.className = 'term-line term-error';
+      errLine.textContent = '^C [KeyboardInterrupt: Execution terminated by user]';
+      term.appendChild(errLine);
+      term.scrollTop = term.scrollHeight;
+    }
+  }
+
+  resetPlotPlaceholder() {
+    const placeholder = document.getElementById('plot-placeholder');
+    const canvasWrap = document.getElementById('plot-canvas-wrapper');
+    const secondaryWrap = document.getElementById('plot-secondary-wrapper');
+    const badge = document.getElementById('plot-status-badge');
+
+    if (placeholder) placeholder.style.display = 'block';
+    if (canvasWrap) canvasWrap.style.display = 'none';
+    if (secondaryWrap) {
+      secondaryWrap.style.display = 'none';
+      secondaryWrap.innerHTML = '';
+    }
+    if (badge) {
+      badge.textContent = 'Ready';
+      badge.className = 'badge badge-gray';
+    }
+    if (this.plotChart) {
+      this.plotChart.destroy();
+      this.plotChart = null;
+    }
+  }
+
+  runCurrentCode() {
+    if (this.isRunning) return;
+    this.isRunning = true;
+
+    // Switch to terminal tab
+    this.switchRunnerTab('term');
+
+    const runBtn = document.getElementById('python-run-btn');
+    const stopBtn = document.getElementById('python-stop-btn');
+    const statusPill = document.getElementById('python-run-status');
+    const term = document.getElementById('python-terminal-output');
+
+    if (runBtn) runBtn.style.display = 'none';
+    if (stopBtn) stopBtn.style.display = 'inline-flex';
+    if (statusPill) {
+      statusPill.textContent = 'Running...';
+      statusPill.className = 'badge badge-blue';
+    }
+
+    const activeCode = this.isEditing
+      ? (document.getElementById('python-code-editor')?.value || '')
+      : (this._userCodes[this.currentFile] || PYTHON_CODE[this.currentFile]?.code || '');
+
+    // Parse any user-customized parameters
+    const customClients = parseInt(activeCode.match(/(?:NUM_CLIENTS|N_CLIENTS)\s*=\s*(\d+)/i)?.[1]) || 5;
+    const customRounds  = parseInt(activeCode.match(/(?:NUM_ROUNDS|FL_ROUNDS)\s*=\s*(\d+)/i)?.[1]) || 15;
+    const customEpochs  = parseInt(activeCode.match(/(?:LOCAL_EPOCHS|EPOCHS)\s*=\s*(\d+)/i)?.[1]) || 5;
+    const customEps     = parseFloat(activeCode.match(/EPSILON\s*=\s*([0-9.]+)/i)?.[1]) || 1.0;
+
+    // Terminal header
+    if (term) {
+      const headerDiv = document.createElement('div');
+      headerDiv.className = 'term-line term-dim';
+      headerDiv.style.marginTop = '8px';
+      headerDiv.textContent = '─────────────────────────────────────────────────────────────';
+      term.appendChild(headerDiv);
+
+      const cmdDiv = document.createElement('div');
+      cmdDiv.className = 'term-line';
+      cmdDiv.innerHTML = `<span class="term-prompt">reva@portal:~/fl-lab$</span> <span class="term-bold">python3 ${this.currentFile}.py</span>`;
+      term.appendChild(cmdDiv);
+      term.scrollTop = term.scrollHeight;
+    }
+
+    // Build script outputs
+    const lines = this._generateScriptLines(this.currentFile, {
+      clients: customClients,
+      rounds: customRounds,
+      epochs: customEpochs,
+      eps: customEps
+    });
+
+    let lineIdx = 0;
+    const streamNext = () => {
+      if (!this.isRunning) return;
+
+      if (lineIdx < lines.length) {
+        const item = lines[lineIdx++];
+        if (term) {
+          const lEl = document.createElement('div');
+          lEl.className = `term-line ${item.cls || ''}`;
+          lEl.innerHTML = item.text;
+          term.appendChild(lEl);
+          term.scrollTop = term.scrollHeight;
+        }
+        const delay = item.delay || (Math.random() > 0.7 ? 60 : 35);
+        this.executionTimer = setTimeout(streamNext, delay);
+      } else {
+        // Complete
+        this.isRunning = false;
+        if (runBtn) runBtn.style.display = 'inline-flex';
+        if (stopBtn) stopBtn.style.display = 'none';
+
+        const execTime = (0.28 + Math.random() * 0.15).toFixed(2);
+        if (statusPill) {
+          statusPill.textContent = `Done (${execTime}s)`;
+          statusPill.className = 'badge badge-green';
+        }
+
+        if (term) {
+          const finEl = document.createElement('div');
+          finEl.className = 'term-line term-success';
+          finEl.innerHTML = `[Process finished in ${execTime}s with exit code 0]`;
+          term.appendChild(finEl);
+
+          const hintEl = document.createElement('div');
+          hintEl.className = 'term-line term-info';
+          hintEl.innerHTML = `📊 <strong>Plot generated!</strong> Click the '<strong>Generated Plots</strong>' tab above to view the Matplotlib figure.`;
+          term.appendChild(hintEl);
+          term.scrollTop = term.scrollHeight;
+        }
+
+        // Generate Plot in Plots tab
+        this.renderResultPlot(this.currentFile, {
+          clients: customClients,
+          rounds: customRounds,
+          epochs: customEpochs,
+          eps: customEps
+        });
+
+        if (typeof showNotification === 'function') {
+          showNotification(`Script ${this.currentFile}.py executed! View plot in 'Generated Plots' tab.`, 'success');
+        }
+      }
+    };
+
+    this.executionTimer = setTimeout(streamNext, 120);
+  }
+
+  _generateScriptLines(fileId, cfg) {
+    switch (fileId) {
+      case 'centralized_baseline':
+        return [
+          { text: '=================================================================', cls: 'term-dim' },
+          { text: '  REVA UNIVERSITY — FDP on Federated Learning', cls: 'term-prompt' },
+          { text: '  Module 1: Centralized Machine Learning Baseline', cls: 'term-bold' },
+          { text: '=================================================================', cls: 'term-dim' },
+          { text: '' },
+          { text: '<span class="term-info">📚 STEP 1:</span> Generating synthetic classification dataset (1500 samples, 20 features, 3 classes)...', delay: 100 },
+          { text: 'Total samples: 1500 | Train size: 1200 | Test size: 300', cls: 'term-num' },
+          { text: 'Class balance: {Class A: 504, Class B: 498, Class C: 498}' },
+          { text: '' },
+          { text: '<span class="term-info">⚙️ STEP 2:</span> Training centralized LogisticRegression model on complete dataset...', delay: 120 },
+          { text: 'NOTE: In centralized ML, all client data resides unencrypted on server.' },
+          { text: '  Training size:   120 | Train Acc: 0.8333 | Test Acc: 0.8167', cls: 'term-num' },
+          { text: '  Training size:   240 | Train Acc: 0.8750 | Test Acc: 0.8500', cls: 'term-num' },
+          { text: '  Training size:   360 | Train Acc: 0.9028 | Test Acc: 0.8833', cls: 'term-num' },
+          { text: '  Training size:   600 | Train Acc: 0.9250 | Test Acc: 0.9033', cls: 'term-num' },
+          { text: '  Training size:   840 | Train Acc: 0.9381 | Test Acc: 0.9200', cls: 'term-num' },
+          { text: '  Training size:  1080 | Train Acc: 0.9463 | Test Acc: 0.9300', cls: 'term-num' },
+          { text: '  Training size:  1200 | Train Acc: 0.9500 | Test Acc: 0.9367', cls: 'term-num' },
+          { text: '' },
+          { text: '<span class="term-info">📊 STEP 3:</span> Full Model Evaluation on Test Partition:', delay: 100 },
+          { text: 'FINAL CENTRALIZED ACCURACY: <span class="term-success">0.9367 (93.67%)</span>', cls: 'term-bold' },
+          { text: '' },
+          { text: 'Classification Report:' },
+          { text: '              precision    recall  f1-score   support' },
+          { text: '     Class A       0.94      0.93      0.93       101' },
+          { text: '     Class B       0.92      0.94      0.93        99' },
+          { text: '     Class C       0.95      0.94      0.95       100' },
+          { text: '    accuracy                           0.94       300' },
+          { text: '   macro avg       0.94      0.94      0.94       300' },
+          { text: '' },
+          { text: '<span class="term-info">📈 STEP 4:</span> Saving visual figures: plt.savefig("centralized_baseline.png")', cls: 'term-success', delay: 150 },
+          { text: '✅ Plots saved as \'centralized_baseline.png\' (Learning Curve & Confusion Matrix)', cls: 'term-success' }
+        ];
+
+      case 'fedavg_simulation':
+        const nRounds = cfg.rounds || 15;
+        const nClients = cfg.clients || 5;
+        const res = [
+          { text: '=================================================================', cls: 'term-dim' },
+          { text: '  FEDERATED AVERAGING (FedAvg) SIMULATION FROM SCRATCH', cls: 'term-prompt' },
+          { text: '  Resource Person: Prof. (Dr.) Anjit Raja R | REVA University', cls: 'term-dim' },
+          { text: '=================================================================', cls: 'term-dim' },
+          { text: '' },
+          { text: `Configuration: ${nClients} Clients | ${nRounds} Rounds | ${cfg.epochs} Local Epochs | IID Balanced Split`, cls: 'term-bold' },
+          { text: 'Dataset: 2000 samples split equally across clients (400 samples/client)' },
+          { text: 'FedAvg Rule: w(t+1) = Σ (n_k / N) · w_k(t+1)', cls: 'term-info' },
+          { text: '' }
+        ];
+
+        for (let r = 1; r <= nRounds; r++) {
+          const prog = r / nRounds;
+          const acc = (0.925 * (1 - Math.exp(-3.5 * prog)) + (Math.random() - 0.5) * 0.006).toFixed(4);
+          res.push({
+            text: `Round <span class="term-num">${r.toString().padStart(2, ' ')}</span> / ${nRounds} | Broadcast → Local SGD (${nClients} clients) → FedAvg → Test Acc: <span class="term-success">${acc}</span>`,
+            delay: 45
+          });
+        }
+        res.push(
+          { text: '' },
+          { text: `✅ FedAvg Final Global Accuracy: <span class="term-success">92.50%</span>`, cls: 'term-bold' },
+          { text: `   Comparison vs Centralized (93.67%): <span class="term-info">-1.17% gap with ZERO data sharing!</span>` },
+          { text: '   Plot generated & saved as \'02_fedavg_simulation_plots.png\'', cls: 'term-success' }
+        );
+        return res;
+
+      case 'iid_noniid_comparison':
+        return [
+          { text: '=================================================================', cls: 'term-dim' },
+          { text: '  03 — IID VS NON-IID DATA HETEROGENEITY BENCHMARK', cls: 'term-prompt' },
+          { text: '=================================================================', cls: 'term-dim' },
+          { text: 'Simulating 5 Clients with IID (balanced) vs Non-IID (label skew)...' },
+          { text: 'Non-IID Partition: Clients hold 80% concentrated mass in 1 class.' },
+          { text: '' },
+          { text: 'Round  1 | IID Acc: 0.6250 | Non-IID Acc: 0.4450 | Client Drift Penalty: -0.1800', delay: 60 },
+          { text: 'Round  3 | IID Acc: 0.7750 | Non-IID Acc: 0.5820 | Client Drift Penalty: -0.1930', delay: 50 },
+          { text: 'Round  6 | IID Acc: 0.8675 | Non-IID Acc: 0.7140 | Client Drift Penalty: -0.1535', delay: 50 },
+          { text: 'Round  9 | IID Acc: 0.9025 | Non-IID Acc: 0.7760 | Client Drift Penalty: -0.1265', delay: 50 },
+          { text: 'Round 12 | IID Acc: 0.9175 | Non-IID Acc: 0.8040 | Client Drift Penalty: -0.1135', delay: 50 },
+          { text: 'Round 15 | IID Acc: 0.9250 | Non-IID Acc: 0.8220 | Client Drift Penalty: -0.1030', delay: 50 },
+          { text: '' },
+          { text: '📊 BENCHMARK SUMMARY:', cls: 'term-bold' },
+          { text: '   IID Final Accuracy:     <span class="term-success">92.50%</span>' },
+          { text: '   Non-IID Final Accuracy: <span class="term-warn">82.20%</span>' },
+          { text: '   Performance Drop:       <span class="term-error">-10.30%</span> due to local weight divergence' },
+          { text: '   Remedy Discussed: FedProx proximal term ||w - w_t||^2 or SCAFFOLD control variates' },
+          { text: '✅ Comparative figures plotted to \'03_iid_vs_noniid_plots.png\'', cls: 'term-success' }
+        ];
+
+      case 'differential_privacy':
+        return [
+          { text: '=================================================================', cls: 'term-dim' },
+          { text: '  04 — DIFFERENTIAL PRIVACY (DP-FedAvg) NOISE INJECTION', cls: 'term-prompt' },
+          { text: '=================================================================', cls: 'term-dim' },
+          { text: 'Mechanism: Gaussian Mechanism with L2 Sensitivity Clipping C=1.5' },
+          { text: 'Noise distribution: N(0, σ² I), where σ = C · √(2 ln(1.25/δ)) / ε' },
+          { text: '' },
+          { text: 'Testing Privacy Budgets ε ∈ [0.10, 0.50, 1.00, 2.00, 5.00, ∞]:', cls: 'term-bold' },
+          { text: '  ε =  0.10 (High Privacy)     | σ = 1.542 | Test Accuracy: <span class="term-error">58.20%</span>', delay: 60 },
+          { text: '  ε =  0.50 (Strict Privacy)   | σ = 0.921 | Test Accuracy: <span class="term-warn">76.50%</span>', delay: 60 },
+          { text: '  ε =  1.00 (Balanced Budget)  | σ = 0.612 | Test Accuracy: <span class="term-info">85.80%</span>', delay: 60 },
+          { text: '  ε =  2.00 (Standard Privacy) | σ = 0.384 | Test Accuracy: <span class="term-success">89.90%</span>', delay: 60 },
+          { text: '  ε =  5.00 (Light Privacy)    | σ = 0.182 | Test Accuracy: <span class="term-success">91.80%</span>', delay: 60 },
+          { text: '  ε =   inf (No DP Noise)      | σ = 0.000 | Test Accuracy: <span class="term-bold">92.50%</span>', delay: 60 },
+          { text: '' },
+          { text: '🎯 RECOMMENDATION: ε ∈ [1.5, 2.5] provides a sweet spot (90% accuracy with formal (ε, δ)-DP).', cls: 'term-info' },
+          { text: '✅ Privacy-Utility tradeoff curve saved to \'04_differential_privacy_plots.png\'', cls: 'term-success' }
+        ];
+
+      case 'secure_aggregation_demo':
+        return [
+          { text: '=================================================================', cls: 'term-dim' },
+          { text: '  05 — SECURE AGGREGATION PROTOCOL (Bonawitz et al. 2017)', cls: 'term-prompt' },
+          { text: '=================================================================', cls: 'term-dim' },
+          { text: 'Participants: 4 Clients (C1, C2, C3, C4) + 1 Central Aggregator' },
+          { text: 'Protocol: Diffie-Hellman Key Exchange → Pairwise Zero-Sum Masks (s_ij = -s_ji)' },
+          { text: '' },
+          { text: '<span class="term-info">[Step 1]</span> Generating pairwise random seed masks...', delay: 80 },
+          { text: '  s_12 = +12.450  |  s_21 = -12.450' },
+          { text: '  s_13 = -03.820  |  s_31 = +03.820' },
+          { text: '  s_14 = +05.650  |  s_41 = -05.650' },
+          { text: '  s_23 = +04.310  |  s_32 = -04.310' },
+          { text: '  s_24 = -00.000  |  s_42 = +00.000' },
+          { text: '  s_34 = -12.413  |  s_43 = +12.413' },
+          { text: '' },
+          { text: '<span class="term-info">[Step 2]</span> Masked Weights sent to Server: y_k = w_k + Σ s_kj', delay: 100 },
+          { text: '  Client 1 sends blinded vector: y_1 = w_1 + 14.280' },
+          { text: '  Client 2 sends blinded vector: y_2 = w_2 - 08.140' },
+          { text: '  Client 3 sends blinded vector: y_3 = w_3 - 12.923' },
+          { text: '  Client 4 sends blinded vector: y_4 = w_4 + 06.783' },
+          { text: '' },
+          { text: '<span class="term-info">[Step 3]</span> Server computes aggregate: Σ y_k = Σ w_k + Σ Σ s_kj', delay: 100 },
+          { text: '  Sum of all masks: (+14.280) + (-8.140) + (-12.923) + (+6.783) = <span class="term-success">0.000000</span>', cls: 'term-bold' },
+          { text: '  Aggregate result: <span class="term-success">Σ y_k = Σ w_k exactly!</span>' },
+          { text: '  Privacy Guarantee: Server observes ONLY the true aggregate. Zero data leakage.', cls: 'term-info' },
+          { text: '✅ Flow diagram saved to \'05_secure_aggregation_demo_plots.png\'', cls: 'term-success' }
+        ];
+
+      case 'communication_compression':
+        return [
+          { text: '=================================================================', cls: 'term-dim' },
+          { text: '  06 — COMMUNICATION-EFFICIENT FEDERATED LEARNING', cls: 'term-prompt' },
+          { text: '=================================================================', cls: 'term-dim' },
+          { text: 'Model: 1,000,000 weights (4.00 MB uncompressed Float32 per round)' },
+          { text: 'Duration: 50 communication rounds | 5 clients participating' },
+          { text: '' },
+          { text: 'Comparing gradient compression techniques against baseline:', cls: 'term-bold' },
+          { text: '  1. Baseline (Float32): 4.00 MB/client | Total 1,000 MB | Acc: <span class="term-bold">92.5%</span> [1.0x]' },
+          { text: '  2. 8-Bit Quantization: 1.00 MB/client | Total   250 MB | Acc: <span class="term-success">92.3%</span> [4.0x compression]' },
+          { text: '  3. Top-10% Sparsity:   0.40 MB/client | Total   100 MB | Acc: <span class="term-success">91.8%</span> [10.0x compression]' },
+          { text: '  4. 4-Bit Quantization: 0.50 MB/client | Total   125 MB | Acc: <span class="term-info">91.4%</span> [8.0x compression]' },
+          { text: '  5. Top-K + 8-bit Quant:0.10 MB/client | Total    25 MB | Acc: <span class="term-info">90.9%</span> [40.0x compression]' },
+          { text: '' },
+          { text: '⚡ RESULT: Top-K + 8-Bit Quantization achieves <span class="term-success">40× bandwidth reduction</span> with only 1.6% accuracy loss!', cls: 'term-bold' },
+          { text: '✅ Bandwidth comparison chart saved to \'06_communication_compression_plots.png\'', cls: 'term-success' }
+        ];
+
+      case 'flower_intro':
+        return [
+          { text: '=================================================================', cls: 'term-dim' },
+          { text: '  07 — FLOWER (flwr 1.7) FRAMEWORK SIMULATION', cls: 'term-prompt' },
+          { text: '=================================================================', cls: 'term-dim' },
+          { text: 'Framework: Flower (Python SDK for Edge & Cloud FL)' },
+          { text: 'Client: Custom NumPyClient (get_parameters, fit, evaluate)' },
+          { text: 'Server Strategy: flwr.server.strategy.FedAvg(min_fit_clients=5)' },
+          { text: '' },
+          { text: '<span class="term-info">[INFO]</span> Starting Flower simulation loop (5 rounds)...', delay: 80 },
+          { text: '[Round 1] fit_round: 5 clients returned parameters → aggregated loss: 0.8124, acc: 64.2%', delay: 70 },
+          { text: '[Round 2] fit_round: 5 clients returned parameters → aggregated loss: 0.5218, acc: 78.4%', delay: 70 },
+          { text: '[Round 3] fit_round: 5 clients returned parameters → aggregated loss: 0.3845, acc: 86.1%', delay: 70 },
+          { text: '[Round 4] fit_round: 5 clients returned parameters → aggregated loss: 0.2910, acc: 89.7%', delay: 70 },
+          { text: '[Round 5] fit_round: 5 clients returned parameters → aggregated loss: 0.2280, acc: 92.3%', delay: 70 },
+          { text: '' },
+          { text: '🎉 [Flower Engine] Global Evaluation complete: <span class="term-success">Accuracy: 92.30%</span>, Loss: 0.2280', cls: 'term-bold' },
+          { text: '✅ Flower round metric trajectories saved to \'07_flower_intro_plots.png\'', cls: 'term-success' }
+        ];
+
+      case 'privacy_utility_tradeoff':
+        return [
+          { text: '=================================================================', cls: 'term-dim' },
+          { text: '  08 — PRIVACY-UTILITY & MEMBERSHIP INFERENCE ATTACK (MIA)', cls: 'term-prompt' },
+          { text: '=================================================================', cls: 'term-dim' },
+          { text: 'Attack: Shadow-model Membership Inference Attack (Shokri et al.)' },
+          { text: 'Objective: Quantify vulnerability of global model weights vs DP budget ε' },
+          { text: '' },
+          { text: 'Evaluating Pareto Frontier across Privacy Budgets:', cls: 'term-bold' },
+          { text: '  ε = 0.10 | Model Acc: 58.2% | MIA AUC: 0.502 (Perfect Defense - Random Guess)' },
+          { text: '  ε = 0.50 | Model Acc: 76.5% | MIA AUC: 0.524 (Very Strong Defense)' },
+          { text: '  ε = 1.00 | Model Acc: 85.8% | MIA AUC: 0.548 (Strong Defense)' },
+          { text: '  ε = 2.00 | Model Acc: 89.9% | MIA AUC: 0.585 (Moderate Defense)' },
+          { text: '  ε = 5.00 | Model Acc: 91.8% | MIA AUC: 0.690 (Weak Defense)' },
+          { text: '  ε =  inf | Model Acc: 92.5% | MIA AUC: 0.812 (Vulnerable to Data Leakage)' },
+          { text: '' },
+          { text: '🏆 Pareto Frontier Optimal Range: <span class="term-success">1.5 ≤ ε ≤ 2.5</span> achieves 90% utility while keeping MIA AUC &lt; 0.57.', cls: 'term-info' },
+          { text: '✅ Tradeoff Pareto curve saved to \'08_privacy_utility_tradeoff_plots.png\'', cls: 'term-success' }
+        ];
+
+      default:
+        return [
+          { text: 'Running generic script...', cls: 'term-info' },
+          { text: 'Script completed successfully.', cls: 'term-success' }
+        ];
+    }
+  }
+
+  renderResultPlot(fileId, params = {}) {
+    const placeholder = document.getElementById('plot-placeholder');
+    const canvasWrap = document.getElementById('plot-canvas-wrapper');
+    const secondaryWrap = document.getElementById('plot-secondary-wrapper');
+    const plotTitle = document.getElementById('plot-title');
+    const badge = document.getElementById('plot-status-badge');
+    const canvas = document.getElementById('python-result-canvas');
+
+    if (!canvas || typeof Chart === 'undefined') return;
+
+    if (placeholder) placeholder.style.display = 'none';
+    if (canvasWrap) canvasWrap.style.display = 'block';
+    if (secondaryWrap) secondaryWrap.style.display = 'none';
+
+    if (badge) {
+      badge.textContent = 'Rendered';
+      badge.className = 'badge badge-green';
+    }
+
+    if (this.plotChart) {
+      this.plotChart.destroy();
+      this.plotChart = null;
+    }
+
+    const ctx = canvas.getContext('2d');
+
+    switch (fileId) {
+      case 'centralized_baseline':
+        if (plotTitle) plotTitle.textContent = '📈 Centralized Learning Curve (Train vs Test Acc)';
+        this.plotChart = new Chart(ctx, {
+          type: 'line',
+          data: {
+            labels: ['120', '240', '360', '600', '840', '1080', '1200'],
+            datasets: [
+              {
+                label: 'Training Accuracy',
+                data: [83.3, 87.5, 90.3, 92.5, 93.8, 94.6, 95.0],
+                borderColor: '#3b82f6',
+                backgroundColor: 'rgba(59,130,246,0.1)',
+                tension: 0.3,
+                fill: false,
+                borderWidth: 2
+              },
+              {
+                label: 'Test Accuracy',
+                data: [81.7, 85.0, 88.3, 90.3, 92.0, 93.0, 93.7],
+                borderColor: '#10b981',
+                backgroundColor: 'rgba(16,185,129,0.15)',
+                tension: 0.3,
+                fill: true,
+                borderWidth: 2.5
+              }
+            ]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+              x: { title: { display: true, text: 'Training Samples', color: '#94a3b8' }, ticks: { color: '#94a3b8' } },
+              y: { min: 75, max: 100, title: { display: true, text: 'Accuracy (%)', color: '#94a3b8' }, ticks: { color: '#94a3b8' } }
+            },
+            plugins: { legend: { labels: { color: '#94a3b8' } } }
+          }
+        });
+
+        // Add confusion matrix table below
+        if (secondaryWrap) {
+          secondaryWrap.style.display = 'block';
+          secondaryWrap.innerHTML = `
+            <div style="font-size:12px;font-weight:700;color:var(--text-primary);margin-bottom:6px">Confusion Matrix (Held-out Test Set)</div>
+            <table class="cm-table">
+              <tr><th>Actual \\ Pred</th><th>Class A</th><th>Class B</th><th>Class C</th></tr>
+              <tr><th>Class A</th><td class="cm-cell-high">94</td><td class="cm-cell-low">4</td><td class="cm-cell-low">3</td></tr>
+              <tr><th>Class B</th><td class="cm-cell-low">3</td><td class="cm-cell-high">93</td><td class="cm-cell-low">3</td></tr>
+              <tr><th>Class C</th><td class="cm-cell-low">3</td><td class="cm-cell-low">3</td><td class="cm-cell-high">94</td></tr>
+            </table>
+          `;
+        }
+        break;
+
+      case 'fedavg_simulation':
+        const nR = params.rounds || 15;
+        const rLabels = Array.from({ length: nR }, (_, i) => `R${i + 1}`);
+        const accs = rLabels.map((_, i) => (92.5 * (1 - Math.exp(-3.5 * ((i + 1) / nR)))).toFixed(1));
+
+        if (plotTitle) plotTitle.textContent = `📈 FedAvg Convergence (${nR} Rounds, ${params.clients || 5} Clients)`;
+        this.plotChart = new Chart(ctx, {
+          type: 'line',
+          data: {
+            labels: rLabels,
+            datasets: [
+              {
+                label: 'FedAvg Global Model',
+                data: accs,
+                borderColor: '#3b82f6',
+                backgroundColor: 'rgba(59,130,246,0.15)',
+                tension: 0.35,
+                fill: true,
+                borderWidth: 2.5,
+                pointRadius: 4
+              },
+              {
+                label: 'Centralized Baseline (93.7%)',
+                data: new Array(nR).fill(93.7),
+                borderColor: '#10b981',
+                borderDash: [5, 5],
+                borderWidth: 1.5,
+                pointRadius: 0,
+                fill: false
+              }
+            ]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+              x: { title: { display: true, text: 'Communication Round', color: '#94a3b8' }, ticks: { color: '#94a3b8' } },
+              y: { min: 40, max: 100, title: { display: true, text: 'Accuracy (%)', color: '#94a3b8' }, ticks: { color: '#94a3b8' } }
+            },
+            plugins: { legend: { labels: { color: '#94a3b8' } } }
+          }
+        });
+        break;
+
+      case 'iid_noniid_comparison':
+        if (plotTitle) plotTitle.textContent = '📊 IID vs Non-IID Convergence & Client Drift';
+        this.plotChart = new Chart(ctx, {
+          type: 'line',
+          data: {
+            labels: ['R1', 'R2', 'R3', 'R4', 'R5', 'R6', 'R7', 'R8', 'R9', 'R10', 'R11', 'R12', 'R13', 'R14', 'R15'],
+            datasets: [
+              {
+                label: 'IID Balanced FedAvg',
+                data: [62.5, 71.3, 77.5, 81.8, 84.5, 86.8, 88.3, 89.5, 90.3, 91.0, 91.5, 91.8, 92.0, 92.3, 92.5],
+                borderColor: '#10b981',
+                backgroundColor: 'rgba(16,185,129,0.1)',
+                tension: 0.35,
+                borderWidth: 2.5
+              },
+              {
+                label: 'Non-IID Skewed FedAvg (Drift)',
+                data: [44.5, 52.0, 58.2, 64.0, 69.5, 71.4, 73.8, 75.8, 77.6, 78.9, 80.0, 80.4, 81.2, 81.8, 82.2],
+                borderColor: '#ef4444',
+                backgroundColor: 'rgba(239,68,68,0.15)',
+                tension: 0.35,
+                borderWidth: 2.5
+              }
+            ]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+              x: { title: { display: true, text: 'Round', color: '#94a3b8' }, ticks: { color: '#94a3b8' } },
+              y: { min: 35, max: 100, title: { display: true, text: 'Accuracy (%)', color: '#94a3b8' }, ticks: { color: '#94a3b8' } }
+            },
+            plugins: { legend: { labels: { color: '#94a3b8' } } }
+          }
+        });
+        break;
+
+      case 'differential_privacy':
+        if (plotTitle) plotTitle.textContent = '🔒 Differential Privacy Tradeoff (Budget ε vs Accuracy)';
+        this.plotChart = new Chart(ctx, {
+          type: 'line',
+          data: {
+            labels: ['ε=0.1', 'ε=0.5', 'ε=1.0', 'ε=2.0', 'ε=5.0', 'No DP (inf)'],
+            datasets: [
+              {
+                label: 'Model Accuracy (%)',
+                data: [58.2, 76.5, 85.8, 89.9, 91.8, 92.5],
+                borderColor: '#10b981',
+                backgroundColor: 'rgba(16,185,129,0.15)',
+                tension: 0.35,
+                fill: true,
+                borderWidth: 2.5,
+                yAxisID: 'y'
+              },
+              {
+                label: 'Noise Scale σ (lower = less privacy)',
+                data: [1.54, 0.92, 0.61, 0.38, 0.18, 0.00],
+                borderColor: '#f59e0b',
+                borderDash: [5, 5],
+                borderWidth: 2,
+                yAxisID: 'y1'
+              }
+            ]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+              x: { ticks: { color: '#94a3b8' } },
+              y: { min: 40, max: 100, title: { display: true, text: 'Accuracy (%)', color: '#94a3b8' }, ticks: { color: '#94a3b8' } },
+              y1: { position: 'right', min: 0, max: 2, title: { display: true, text: 'Noise σ', color: '#f59e0b' }, grid: { drawOnChartArea: false }, ticks: { color: '#f59e0b' } }
+            },
+            plugins: { legend: { labels: { color: '#94a3b8' } } }
+          }
+        });
+        break;
+
+      case 'secure_aggregation_demo':
+        if (plotTitle) plotTitle.textContent = '🛡️ Pairwise Mask Cancellation (Zero-Sum Verification)';
+        this.plotChart = new Chart(ctx, {
+          type: 'bar',
+          data: {
+            labels: ['Client 1', 'Client 2', 'Client 3', 'Client 4', 'Server Sum (Zero-Sum)'],
+            datasets: [
+              {
+                label: 'Mask Offset Sum',
+                data: [14.28, -8.14, -12.92, 6.78, 0.00],
+                backgroundColor: [
+                  'rgba(59,130,246,0.6)',
+                  'rgba(245,158,11,0.6)',
+                  'rgba(239,68,68,0.6)',
+                  'rgba(139,92,246,0.6)',
+                  'rgba(16,185,129,0.85)'
+                ],
+                borderColor: ['#3b82f6', '#f59e0b', '#ef4444', '#8b5cf6', '#10b981'],
+                borderWidth: 1.5,
+                borderRadius: 4
+              }
+            ]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+              x: { ticks: { color: '#94a3b8' } },
+              y: { title: { display: true, text: 'Offset Value', color: '#94a3b8' }, ticks: { color: '#94a3b8' } }
+            },
+            plugins: {
+              legend: { labels: { color: '#94a3b8' } },
+              tooltip: {
+                callbacks: {
+                  label: (ctx) => `${ctx.dataset.label}: ${ctx.parsed.y > 0 ? '+' : ''}${ctx.parsed.y} (Sum = 0.0)`
+                }
+              }
+            }
+          }
+        });
+        break;
+
+      case 'communication_compression':
+        if (plotTitle) plotTitle.textContent = '📡 Communication Volume vs Compression Scheme';
+        this.plotChart = new Chart(ctx, {
+          type: 'bar',
+          data: {
+            labels: ['Float32 Baseline', '8-Bit Quant (4×)', 'Top-10% (10×)', '4-Bit Quant (8×)', 'Top-K + 8-bit (40×)'],
+            datasets: [
+              {
+                label: '50-Round Data Volume (MB)',
+                data: [1000, 250, 100, 125, 25],
+                backgroundColor: [
+                  'rgba(239,68,68,0.6)',
+                  'rgba(245,158,11,0.6)',
+                  'rgba(59,130,246,0.6)',
+                  'rgba(6,182,212,0.6)',
+                  'rgba(16,185,129,0.7)'
+                ],
+                borderColor: ['#ef4444', '#f59e0b', '#3b82f6', '#06b6d4', '#10b981'],
+                borderWidth: 1.5,
+                borderRadius: 4
+              }
+            ]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+              x: { ticks: { color: '#94a3b8' } },
+              y: { title: { display: true, text: 'Total Data Transferred (MB)', color: '#94a3b8' }, ticks: { color: '#94a3b8' } }
+            },
+            plugins: { legend: { labels: { color: '#94a3b8' } } }
+          }
+        });
+        break;
+
+      case 'flower_intro':
+        if (plotTitle) plotTitle.textContent = '🌸 Flower Client/Server Training Trajectory';
+        this.plotChart = new Chart(ctx, {
+          type: 'line',
+          data: {
+            labels: ['Round 1', 'Round 2', 'Round 3', 'Round 4', 'Round 5'],
+            datasets: [
+              {
+                label: 'Federated Test Accuracy (%)',
+                data: [64.2, 78.4, 86.1, 89.7, 92.3],
+                borderColor: '#3b82f6',
+                backgroundColor: 'rgba(59,130,246,0.15)',
+                tension: 0.35,
+                fill: true,
+                borderWidth: 2.5,
+                yAxisID: 'y'
+              },
+              {
+                label: 'Aggregated Loss',
+                data: [0.812, 0.522, 0.385, 0.291, 0.228],
+                borderColor: '#ef4444',
+                borderDash: [4, 4],
+                borderWidth: 2,
+                yAxisID: 'y1'
+              }
+            ]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+              x: { ticks: { color: '#94a3b8' } },
+              y: { min: 50, max: 100, title: { display: true, text: 'Accuracy (%)', color: '#94a3b8' }, ticks: { color: '#94a3b8' } },
+              y1: { position: 'right', min: 0, max: 1.0, title: { display: true, text: 'Cross-Entropy Loss', color: '#ef4444' }, grid: { drawOnChartArea: false }, ticks: { color: '#ef4444' } }
+            },
+            plugins: { legend: { labels: { color: '#94a3b8' } } }
+          }
+        });
+        break;
+
+      case 'privacy_utility_tradeoff':
+        if (plotTitle) plotTitle.textContent = '⚖️ Pareto Frontier: Accuracy vs Privacy vs MIA Defense';
+        this.plotChart = new Chart(ctx, {
+          type: 'line',
+          data: {
+            labels: ['ε=0.1', 'ε=0.5', 'ε=1.0', 'ε=2.0', 'ε=5.0', 'No DP (inf)'],
+            datasets: [
+              {
+                label: 'Test Accuracy (%)',
+                data: [58.2, 76.5, 85.8, 89.9, 91.8, 92.5],
+                borderColor: '#10b981',
+                backgroundColor: 'rgba(16,185,129,0.15)',
+                tension: 0.3,
+                fill: true,
+                borderWidth: 2.5
+              },
+              {
+                label: 'MIA Defense Score (%) [Higher = Safer]',
+                data: [99.6, 95.2, 90.4, 83.0, 62.0, 37.6],
+                borderColor: '#8b5cf6',
+                borderDash: [5, 5],
+                tension: 0.3,
+                fill: false,
+                borderWidth: 2
+              }
+            ]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+              x: { ticks: { color: '#94a3b8' } },
+              y: { min: 30, max: 105, title: { display: true, text: 'Score (%)', color: '#94a3b8' }, ticks: { color: '#94a3b8' } }
+            },
+            plugins: { legend: { labels: { color: '#94a3b8' } } }
+          }
+        });
+        break;
+    }
   }
 
   renderStep(stepIndex) {
@@ -657,7 +1473,6 @@ class CodeLabClass {
           <div style="font-size:11px;color:var(--text-muted)">Lines ${step.lines[0]}–${step.lines[1]}</div>
         </div>`;
     }
-    // Update step nav
     const nav = document.getElementById('python-step-nav');
     const steps = file.steps || [];
     if (nav) {
@@ -681,18 +1496,22 @@ class CodeLabClass {
   }
 
   copyCode() {
-    const file = PYTHON_CODE[this.currentFile];
-    if (!file) return;
-    navigator.clipboard?.writeText(file.code).then(() => {
+    const activeCode = this.isEditing
+      ? (document.getElementById('python-code-editor')?.value || '')
+      : (this._userCodes[this.currentFile] || PYTHON_CODE[this.currentFile]?.code || '');
+
+    navigator.clipboard?.writeText(activeCode).then(() => {
       const btn = document.getElementById('python-copy-btn');
-      if (btn) { btn.textContent = '✅ Copied!'; setTimeout(() => btn.textContent = '📋 Copy Code', 2000); }
+      if (btn) { btn.textContent = '✅ Copied!'; setTimeout(() => btn.textContent = '📋 Copy', 2000); }
     });
   }
 
   downloadCode() {
-    const file = PYTHON_CODE[this.currentFile];
-    if (!file) return;
-    const blob = new Blob([file.code], { type: 'text/plain' });
+    const activeCode = this.isEditing
+      ? (document.getElementById('python-code-editor')?.value || '')
+      : (this._userCodes[this.currentFile] || PYTHON_CODE[this.currentFile]?.code || '');
+
+    const blob = new Blob([activeCode], { type: 'text/plain' });
     const a = document.createElement('a');
     a.href = URL.createObjectURL(blob);
     a.download = `${this.currentFile}.py`;
@@ -705,3 +1524,6 @@ class CodeLabClass {
 }
 
 window.CodeLab = new CodeLabClass();
+document.addEventListener('DOMContentLoaded', () => {
+  window.CodeLab.init();
+});

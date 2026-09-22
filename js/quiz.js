@@ -55,7 +55,7 @@ const BUILT_IN_QUESTIONS = {
 };
 
 // ── QuizEngine class ──────────────────────────────────────────────────────────
-class QuizEngine {
+class QuizEngineClass {
   constructor() {
     this.questions      = [];
     this.currentIndex   = 0;
@@ -64,28 +64,35 @@ class QuizEngine {
     this.moduleId       = 'fl-basics';
     this.answers        = [];     // store user's answers
     this._initialized   = false;
+    this._selectedOption= undefined;
   }
 
   init() {
     if (this._initialized) return;
     this._initialized = true;
+
     // Module selector
     const sel = document.getElementById('quiz-module-select');
     sel?.addEventListener('change', () => {
       this.loadModule(sel.value);
     });
-    // Buttons
+
+    // Action buttons
     document.getElementById('quiz-submit')?.addEventListener('click', () => this.submitAnswer());
     document.getElementById('quiz-next')?.addEventListener('click',   () => this.nextQuestion());
-    document.getElementById('quiz-restart')?.addEventListener('click',() => this.reset());
-    this.loadModule('fl-basics');
+
+    this.loadModule(sel?.value || 'fl-basics');
   }
 
   loadModule(moduleId) {
     this.moduleId = moduleId;
-    // Prefer config questions, fallback to built-in
     const cfg = window.FDP_CONFIG?.quiz?.[moduleId];
     this.questions = cfg || BUILT_IN_QUESTIONS[moduleId] || BUILT_IN_QUESTIONS['fl-basics'];
+    
+    // Sync dropdown if not already set
+    const sel = document.getElementById('quiz-module-select');
+    if (sel && sel.value !== moduleId) sel.value = moduleId;
+
     this.reset();
   }
 
@@ -94,10 +101,13 @@ class QuizEngine {
     this.score        = 0;
     this.answered     = false;
     this.answers      = [];
+    this._selectedOption = undefined;
+
     const results = document.getElementById('quiz-results');
     const main    = document.getElementById('quiz-main');
     if (results) results.style.display = 'none';
     if (main)    main.style.display    = 'block';
+
     this.renderQuestion(0);
     this._updateProgress();
   }
@@ -105,12 +115,17 @@ class QuizEngine {
   renderQuestion(index) {
     const q = this.questions[index];
     if (!q) return;
-    this.answered = false;
+
+    this.currentIndex    = index;
+    this.answered        = false;
+    this._selectedOption = undefined;
+
     const container = document.getElementById('quiz-container');
     if (!container) return;
+
     container.innerHTML = `
       <div class="quiz-card">
-        <div class="quiz-progress-text">Question ${index + 1} of ${this.questions.length} &nbsp;|&nbsp; Score: ${this.score}/${index}</div>
+        <div class="quiz-progress-text">Question ${index + 1} of ${this.questions.length} &nbsp;|&nbsp; Current Score: ${this.score}/${this.answers.length}</div>
         <div class="quiz-question">${q.q}</div>
         <div class="quiz-options" id="quiz-options">
           ${q.options.map((opt, i) => `
@@ -122,21 +137,32 @@ class QuizEngine {
         </div>
         <div class="quiz-feedback" id="quiz-feedback-panel" style="display:none"></div>
       </div>`;
+
     // Buttons
     const submitBtn = document.getElementById('quiz-submit');
     const nextBtn   = document.getElementById('quiz-next');
-    if (submitBtn) { submitBtn.style.display = 'inline-flex'; submitBtn.disabled = true; }
-    if (nextBtn)   { nextBtn.style.display   = 'none'; }
+    if (submitBtn) {
+      submitBtn.style.display = 'inline-flex';
+      submitBtn.disabled = true;
+      submitBtn.textContent = '✅ Submit Answer';
+    }
+    if (nextBtn) {
+      nextBtn.style.display = 'none';
+    }
+
     this._updateProgress();
   }
 
   selectOption(optionIndex) {
     if (this.answered) return;
+
+    this._selectedOption = optionIndex;
+
     // Highlight selection
     document.querySelectorAll('.quiz-option').forEach((btn, i) => {
       btn.classList.toggle('selected', i === optionIndex);
     });
-    this._selectedOption = optionIndex;
+
     const submitBtn = document.getElementById('quiz-submit');
     if (submitBtn) submitBtn.disabled = false;
   }
@@ -144,29 +170,47 @@ class QuizEngine {
   submitAnswer() {
     if (this.answered || this._selectedOption === undefined) return;
     this.answered = true;
+
     const q = this.questions[this.currentIndex];
-    const isCorrect = this._selectedOption === q.answer;
+    const isCorrect = (this._selectedOption === q.answer);
     if (isCorrect) this.score++;
-    this.answers.push({ questionIndex: this.currentIndex, selected: this._selectedOption, correct: isCorrect });
-    // Show correct/incorrect on options
+
+    this.answers.push({
+      questionIndex: this.currentIndex,
+      selected: this._selectedOption,
+      correct: isCorrect
+    });
+
+    // Show correct/incorrect styles on options
     document.querySelectorAll('.quiz-option').forEach((btn, i) => {
-      if (i === q.answer)              btn.classList.add('correct');
+      if (i === q.answer) btn.classList.add('correct');
       if (i === this._selectedOption && !isCorrect) btn.classList.add('incorrect');
       btn.disabled = true;
     });
-    // Show feedback
+
+    // Show feedback panel
     const feedback = document.getElementById('quiz-feedback-panel');
     if (feedback) {
       feedback.style.display = 'block';
       feedback.className = `quiz-feedback ${isCorrect ? 'correct' : 'incorrect'}`;
-      feedback.innerHTML = `<strong>${isCorrect ? '✅ Correct!' : '❌ Incorrect'}</strong><br>${q.explanation}`;
+      feedback.innerHTML = `
+        <div style="font-weight:700;font-size:14px;margin-bottom:4px">
+          ${isCorrect ? '✅ Correct!' : '❌ Incorrect'}
+        </div>
+        <div>${q.explanation}</div>
+      `;
     }
-    // Toggle buttons
+
+    // Toggle submit/next buttons
     const submitBtn = document.getElementById('quiz-submit');
     const nextBtn   = document.getElementById('quiz-next');
     if (submitBtn) submitBtn.style.display = 'none';
-    if (nextBtn)   nextBtn.style.display   = 'inline-flex';
-    this._selectedOption = undefined;
+    if (nextBtn) {
+      nextBtn.style.display = 'inline-flex';
+      nextBtn.textContent = (this.currentIndex + 1 >= this.questions.length) ? 'View Final Results 🏆' : 'Next Question →';
+    }
+
+    this._updateProgress();
   }
 
   nextQuestion() {
@@ -183,33 +227,64 @@ class QuizEngine {
     const results = document.getElementById('quiz-results');
     if (main)    main.style.display    = 'none';
     if (!results) return;
+
     results.style.display = 'block';
-    const pct   = Math.round((this.score / this.questions.length) * 100);
-    const grade = pct >= 80 ? '🏆 Excellent!' : pct >= 60 ? '👍 Good' : '📚 Keep Learning';
+    const total = this.questions.length;
+    const pct   = Math.round((this.score / total) * 100);
+    const grade = pct >= 80 ? '🏆 Outstanding!' : pct >= 60 ? '👍 Good Job!' : '📚 Keep Learning & Review';
+    const color = pct >= 80 ? 'var(--accent-green)' : pct >= 60 ? 'var(--accent-blue)' : 'var(--accent-yellow)';
+
     results.innerHTML = `
-      <div class="quiz-score-display">
-        <div class="quiz-score-circle">${pct}%</div>
+      <div class="quiz-card quiz-score-display">
+        <div class="quiz-score-circle" style="border-color:${color};color:${color}">${pct}%</div>
         <h2 style="color:var(--text-primary);margin-bottom:8px">${grade}</h2>
-        <p style="color:var(--text-secondary)">You scored <strong style="color:var(--accent-blue)">${this.score} out of ${this.questions.length}</strong> questions correctly.</p>
-        <div style="margin:24px 0">
-          ${this.answers.map((a, i) => `<span style="display:inline-block;width:24px;height:24px;border-radius:50%;background:${a.correct ? 'var(--accent-green)' : 'var(--accent-red)'};margin:3px;line-height:24px;text-align:center;font-size:12px">${a.correct?'✓':'✗'}</span>`).join('')}
+        <p style="color:var(--text-secondary);font-size:14px">You scored <strong style="color:var(--accent-blue)">${this.score} out of ${total}</strong> questions correctly.</p>
+        <div style="margin:20px 0;display:flex;gap:6px;justify-content:center;flex-wrap:wrap">
+          ${this.answers.map((a, i) => `
+            <div style="display:flex;flex-direction:column;align-items:center;gap:2px">
+              <span style="display:inline-block;width:28px;height:28px;border-radius:50%;background:${a.correct ? 'rgba(16,185,129,0.2)' : 'rgba(239,68,68,0.2)'};color:${a.correct ? '#34d399' : '#f87171'};border:1px solid ${a.correct ? '#10b981' : '#ef4444'};line-height:28px;text-align:center;font-size:13px;font-weight:700">${a.correct?'✓':'✗'}</span>
+              <span style="font-size:10px;color:var(--text-muted)">Q${i+1}</span>
+            </div>
+          `).join('')}
         </div>
-        <button class="btn btn-primary" id="quiz-restart" onclick="window.QuizEngine.reset()">🔄 Try Again</button>
-        &nbsp;
-        <button class="btn btn-secondary" onclick="navigateTo('research')">📚 Research Corner</button>
+        <div style="display:flex;gap:12px;justify-content:center;margin-top:20px;flex-wrap:wrap">
+          <button class="btn btn-primary" id="quiz-restart" onclick="window.QuizEngine.reset()">🔄 Retake Quiz</button>
+          <button class="btn btn-secondary" onclick="navigateTo('research')">🔭 Explore Research</button>
+        </div>
       </div>`;
+
+    this._updateProgress();
   }
 
   _updateProgress() {
     const progressBar = document.getElementById('quiz-progress-fill');
     const progressTxt = document.getElementById('quiz-progress-text');
+    const scoreEl     = document.getElementById('quiz-score');
     const total = this.questions.length;
-    const done  = this.currentIndex;
-    if (progressBar) progressBar.style.width = `${total > 0 ? (done/total)*100 : 0}%`;
-    if (progressTxt) progressTxt.textContent = `${done}/${total}`;
+    const currentNum = Math.min(this.currentIndex + 1, total);
+
+    if (progressBar) progressBar.style.width = `${total > 0 ? (this.answers.length / total) * 100 : 0}%`;
+    if (progressTxt) progressTxt.textContent = `Question ${currentNum} of ${total}`;
+    if (scoreEl) {
+      scoreEl.innerHTML = `Score: <strong style="color:var(--accent-green)">${this.score}</strong> / ${this.answers.length}`;
+    }
   }
 }
 
-// Singleton
-const quizInstance = new QuizEngine();
+// Singleton & Exports
+const quizInstance = new QuizEngineClass();
 window.QuizEngine = quizInstance;
+window.QuizEngineClass = QuizEngineClass;
+
+// Static bridges for safety if called as class
+QuizEngineClass.init = () => quizInstance.init();
+QuizEngineClass.selectOption = (i) => quizInstance.selectOption(i);
+QuizEngineClass.submitAnswer = () => quizInstance.submitAnswer();
+QuizEngineClass.nextQuestion = () => quizInstance.nextQuestion();
+QuizEngineClass.reset = () => quizInstance.reset();
+QuizEngineClass.loadModule = (m) => quizInstance.loadModule(m);
+
+// Auto-initialize when DOM is ready
+document.addEventListener('DOMContentLoaded', () => {
+  window.QuizEngine.init();
+});

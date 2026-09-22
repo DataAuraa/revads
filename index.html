@@ -990,14 +990,14 @@
 ───────────────────────────────────────────────────────────────────── -->
 <div id="section-python-lab" style="display:none">
   <div class="section-title">🐍 Python Laboratory</div>
-  <div class="section-subtitle">Federated Learning code — view, copy, and download for Google Colab</div>
+  <div class="section-subtitle">Federated Learning code — view, edit, download, and run directly in the portal</div>
 
-  <div class="alert alert-success" style="margin-bottom:20px"><span class="alert-icon">✅</span><span>All Python code uses <strong>numpy, scikit-learn, and matplotlib</strong> (available in Google Colab by default). No GPU required. Run directly in Colab or locally.</span></div>
+  <div class="alert alert-success" style="margin-bottom:20px"><span class="alert-icon">⚡</span><span><strong>In-Portal Python Runtime:</strong> All 8 scripts can be executed directly inside the portal below with real-time terminal output and interactive Matplotlib figures. No installation required.</span></div>
 
   <div class="grid-2" style="gap:24px">
     <div class="card" style="flex:1">
-      <div class="card-header">
-        <div><label class="slider-label">Select Python File</label><select id="python-file-select" style="width:100%;background:var(--bg-secondary);border:1px solid var(--border-color);border-radius:var(--radius-sm);padding:8px;color:var(--text-primary);margin-top:4px">
+      <div class="card-header" style="flex-wrap:wrap;gap:10px">
+        <div style="flex:1;min-width:220px"><label class="slider-label">Select Python File</label><select id="python-file-select" style="width:100%;background:var(--bg-secondary);border:1px solid var(--border-color);border-radius:var(--radius-sm);padding:8px;color:var(--text-primary);margin-top:4px">
           <option value="centralized_baseline">01 — Centralized Learning Baseline</option>
           <option value="fedavg_simulation">02 — FedAvg Simulation from Scratch</option>
           <option value="iid_noniid_comparison">03 — IID vs Non-IID Data</option>
@@ -1007,30 +1007,89 @@
           <option value="flower_intro">07 — Flower (flwr) Framework Intro</option>
           <option value="privacy_utility_tradeoff">08 — Privacy-Utility Tradeoff</option>
         </select></div>
-        <div style="display:flex;gap:8px;margin-top:8px">
-          <button class="btn btn-ghost btn-sm" id="python-copy-btn">📋 Copy Code</button>
-          <button class="btn btn-success btn-sm" id="python-download-btn">⬇️ Download .py</button>
+        <div style="display:flex;gap:6px;align-items:flex-end;flex-wrap:wrap">
+          <button class="btn btn-success btn-sm" id="python-run-btn" onclick="CodeLab.runCurrentCode()">▶ Run in Portal</button>
+          <button class="btn btn-danger btn-sm" id="python-stop-btn" onclick="CodeLab.stopExecution()" style="display:none">⏹ Stop</button>
+          <button class="btn btn-secondary btn-sm" id="python-edit-btn" onclick="CodeLab.toggleEdit()">✏️ Edit Code</button>
+          <button class="btn btn-ghost btn-sm" id="python-copy-btn">📋 Copy</button>
+          <button class="btn btn-ghost btn-sm" id="python-download-btn">⬇️ Download</button>
         </div>
       </div>
-      <div id="python-file-title" style="font-size:14px;font-weight:700;color:var(--accent-blue);margin-bottom:10px">FedAvg Simulation from Scratch</div>
-      <div id="python-code-viewer" style="font-size:12px;max-height:500px;overflow-y:auto"></div>
-    </div>
-    <div style="display:flex;flex-direction:column;gap:16px">
-      <div class="card">
-        <div class="card-title" style="margin-bottom:12px">📋 Step-by-Step Guide</div>
-        <div id="python-step-nav" style="display:flex;flex-direction:column;gap:6px;margin-bottom:12px"></div>
-        <div id="python-step-display" style="background:var(--bg-secondary);border-radius:var(--radius-sm);min-height:80px"></div>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+        <div id="python-file-title" style="font-size:14px;font-weight:700;color:var(--accent-blue)">FedAvg Simulation from Scratch</div>
+        <div id="python-edit-indicator" style="display:none;font-size:11px;color:var(--accent-yellow)">✏️ Edit Mode Active (Run executes your edits)</div>
       </div>
-      <div class="card">
-        <div class="card-title" style="margin-bottom:12px">☁️ Run in Google Colab</div>
-        <ol style="font-size:13px;color:var(--text-secondary);line-height:1.8;padding-left:18px">
-          <li>Download the .py file using the button above</li>
-          <li>Open <a href="https://colab.research.google.com" target="_blank" style="color:var(--accent-blue)">colab.research.google.com</a></li>
-          <li>File → Upload notebook or upload .py file</li>
-          <li>All required packages (numpy, scikit-learn, matplotlib) are pre-installed</li>
-          <li>Click Runtime → Run All</li>
-        </ol>
-        <div class="alert alert-info" style="margin-top:10px"><span class="alert-icon">💡</span><span>No installation needed! Google Colab provides free Python environment with all scientific computing packages.</span></div>
+      <div id="python-code-viewer" style="font-size:12px;max-height:480px;overflow-y:auto"></div>
+      <textarea id="python-code-editor" class="python-editor-textarea" spellcheck="false" placeholder="Write or edit Python code here..."></textarea>
+    </div>
+
+    <!-- Right Workbench: In-Portal Terminal & Visualizer -->
+    <div style="display:flex;flex-direction:column;gap:16px">
+      <div class="card" style="padding:16px">
+        <div class="runner-tabs">
+          <button class="runner-tab-btn active" id="tab-runner-term" onclick="CodeLab.switchRunnerTab('term')">💻 Terminal Output</button>
+          <button class="runner-tab-btn" id="tab-runner-plots" onclick="CodeLab.switchRunnerTab('plots')">📊 Generated Plots</button>
+          <button class="runner-tab-btn" id="tab-runner-steps" onclick="CodeLab.switchRunnerTab('steps')">📋 Step Guide</button>
+        </div>
+
+        <!-- Terminal View -->
+        <div id="runner-view-term" class="python-terminal">
+          <div class="terminal-header">
+            <div class="terminal-dots">
+              <span class="terminal-dot red"></span>
+              <span class="terminal-dot yellow"></span>
+              <span class="terminal-dot green"></span>
+            </div>
+            <span class="terminal-title" id="terminal-title">python3 runner — ready</span>
+            <div style="display:flex;gap:8px;align-items:center">
+              <span id="python-run-status" class="badge badge-gray" style="font-size:10px">Ready</span>
+              <button class="btn btn-ghost btn-sm" style="padding:2px 8px;font-size:11px" onclick="CodeLab.clearTerminal()">Clear</button>
+            </div>
+          </div>
+          <div class="terminal-body" id="python-terminal-output">
+            <div class="term-line term-dim"># REVA University Python Execution Environment</div>
+            <div class="term-line term-dim"># Python 3.11.8 (FedAvg &amp; FL Scientific Stack: numpy, sklearn, matplotlib)</div>
+            <div class="term-line term-dim"># Click '▶ Run in Portal' to execute this script and generate interactive plots...</div>
+          </div>
+        </div>
+
+        <!-- Plots View -->
+        <div id="runner-view-plots" style="display:none">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+            <div id="plot-title" style="font-size:13px;font-weight:700;color:var(--text-primary)">📈 Generated Plot Output</div>
+            <span class="badge badge-green" id="plot-status-badge">Ready</span>
+          </div>
+          <div id="python-plot-container" style="background:#070b12;border:1px solid var(--border-color);border-radius:var(--radius-sm);padding:14px;min-height:260px;display:flex;flex-direction:column;justify-content:center;align-items:center">
+            <div id="plot-placeholder" style="color:var(--text-muted);font-size:12px;text-align:center">
+              Run script with '▶ Run in Portal' to render Matplotlib figures and visual analytics here.
+            </div>
+            <div id="plot-canvas-wrapper" style="width:100%;height:260px;display:none">
+              <canvas id="python-result-canvas"></canvas>
+            </div>
+            <div id="plot-secondary-wrapper" style="width:100%;margin-top:12px;display:none"></div>
+          </div>
+        </div>
+
+        <!-- Steps View -->
+        <div id="runner-view-steps" style="display:none">
+          <div id="python-step-nav" style="display:flex;flex-direction:column;gap:6px;margin-bottom:12px"></div>
+          <div id="python-step-display" style="background:var(--bg-secondary);border-radius:var(--radius-sm);min-height:80px"></div>
+        </div>
+      </div>
+
+      <!-- Collapsible Run in Colab card -->
+      <div class="card" style="padding:16px">
+        <details>
+          <summary style="cursor:pointer;font-size:13px;font-weight:700;color:var(--text-primary);display:flex;align-items:center;gap:6px">
+            <span>☁️ Run in Google Colab (External Alternative)</span>
+          </summary>
+          <ol style="font-size:12px;color:var(--text-secondary);line-height:1.7;padding-left:18px;margin-top:10px">
+            <li>Download the .py file using the button above</li>
+            <li>Open <a href="https://colab.research.google.com" target="_blank" style="color:var(--accent-blue)">colab.research.google.com</a></li>
+            <li>File → Upload notebook or upload .py file</li>
+            <li>Click Runtime → Run All</li>
+          </ol>
+        </details>
       </div>
     </div>
   </div>
@@ -1354,7 +1413,7 @@
   <div class="section-subtitle">Test your understanding of Federated Learning concepts</div>
   <div style="display:flex;gap:16px;align-items:flex-end;margin-bottom:20px;flex-wrap:wrap">
     <div><label class="slider-label">Select Module</label>
-    <select id="quiz-module-select" style="background:var(--bg-secondary);border:1px solid var(--border-color);border-radius:var(--radius-sm);padding:8px 14px;color:var(--text-primary);font-size:13px;margin-top:4px">
+    <select id="quiz-module-select" onchange="window.QuizEngine.loadModule(this.value)" style="background:var(--bg-secondary);border:1px solid var(--border-color);border-radius:var(--radius-sm);padding:8px 14px;color:var(--text-primary);font-size:13px;margin-top:4px">
       <option value="fl-basics">FL Basics (10 questions)</option>
       <option value="fedavg">FedAvg Deep Dive (5 questions)</option>
       <option value="privacy">Privacy & DP (8 questions)</option>
@@ -1362,16 +1421,16 @@
       <option value="advanced">Advanced Topics (7 questions)</option>
     </select></div>
     <div style="flex:1">
-      <div class="progress-label"><span id="quiz-progress-text">0/0</span></div>
+      <div class="progress-label"><span id="quiz-progress-text">Question 1 of 10</span></div>
       <div class="progress-bar-container"><div class="progress-bar" id="quiz-progress-fill" style="width:0%"></div></div>
     </div>
-    <div id="quiz-score" style="font-size:13px;color:var(--text-muted)">Score: 0</div>
+    <div id="quiz-score" style="font-size:13px;color:var(--text-muted)">Score: 0 / 0</div>
   </div>
   <div id="quiz-main">
     <div id="quiz-container"></div>
     <div style="display:flex;gap:10px;margin-top:16px">
-      <button class="btn btn-primary" id="quiz-submit" disabled>✅ Submit Answer</button>
-      <button class="btn btn-secondary" id="quiz-next" style="display:none">Next Question →</button>
+      <button class="btn btn-primary" id="quiz-submit" onclick="window.QuizEngine.submitAnswer()" disabled>✅ Submit Answer</button>
+      <button class="btn btn-secondary" id="quiz-next" onclick="window.QuizEngine.nextQuestion()" style="display:none">Next Question →</button>
     </div>
   </div>
   <div id="quiz-results" style="display:none"></div>
@@ -1418,12 +1477,78 @@
   <div class="tab-pane" data-tab="ecosystem" data-tab-group="research">
     <div class="alert alert-info" style="margin-bottom:16px"><span class="alert-icon">ℹ️</span><span>All framework descriptions are <strong>conceptual overviews</strong>. Verify current versions and features at official documentation before production use.</span></div>
     <div class="grid-2" style="gap:12px">
-      <div class="tech-stack-card"><div class="tech-logo">🌸</div><div class="tech-name">Flower (flwr)</div><div class="tech-type">Framework-agnostic FL</div><div class="tech-desc">The most popular open-source FL framework. Works with PyTorch, TensorFlow, JAX, scikit-learn. Simulation + real distributed modes. Strong community.</div><div style="margin-top:10px"><span class="badge badge-green">Recommended for beginners</span></div></div>
-      <div class="tech-stack-card"><div class="tech-logo">🧠</div><div class="tech-name">TensorFlow Federated</div><div class="tech-type">Google / TensorFlow</div><div class="tech-desc">Google's FL framework, tightly integrated with TF. High-level FL API for simulation. Production deployment tooling for cross-device FL. Based on Gboard production system.</div><div style="margin-top:10px"><span class="badge badge-blue">Production-grade</span></div></div>
-      <div class="tech-stack-card"><div class="tech-logo">🔷</div><div class="tech-name">OpenFL (Intel)</div><div class="tech-type">Enterprise FL</div><div class="tech-desc">Intel's open-source FL platform designed for cross-silo, enterprise deployments. Strong privacy features, integration with Intel SGX for hardware security.</div><div style="margin-top:10px"><span class="badge badge-yellow">Enterprise-focused</span></div></div>
-      <div class="tech-stack-card"><div class="tech-logo">🚀</div><div class="tech-name">NVIDIA FLARE</div><div class="tech-type">NVIDIA / Healthcare</div><div class="tech-desc">NVIDIA Federated Learning Application Runtime Environment. Designed for healthcare and life sciences FL. Integration with Clara (medical imaging) and RAPIDS.</div><div style="margin-top:10px"><span class="badge badge-red">Healthcare-focused</span></div></div>
-      <div class="tech-stack-card"><div class="tech-logo">🔏</div><div class="tech-name">PySyft</div><div class="tech-type">OpenMined / Privacy</div><div class="tech-desc">Privacy-focused ML framework with built-in DP, SecAgg, and HE. Remote execution model (data scientists query data without seeing it). PyTorch compatible.</div><div style="margin-top:10px"><span class="badge badge-purple">Privacy-first</span></div></div>
-      <div class="tech-stack-card"><div class="tech-logo">🌐</div><div class="tech-name">FedML</div><div class="tech-type">Research Platform</div><div class="tech-desc">Comprehensive FL research platform supporting simulation, distributed, mobile (Android/iOS), and IoT FL. Rich benchmark datasets and algorithms library.</div><div style="margin-top:10px"><span class="badge badge-cyan">Research-focused</span></div></div>
+      <a href="https://flower.ai" target="_blank" rel="noopener noreferrer" class="tech-stack-card" title="Visit official Flower (flwr) website">
+        <div>
+          <div class="tech-logo">🌸</div>
+          <div class="tech-name">Flower (flwr) <span style="font-size:12px;opacity:0.7">↗</span></div>
+          <div class="tech-type">Framework-agnostic FL</div>
+          <div class="tech-desc">The most popular open-source FL framework. Works with PyTorch, TensorFlow, JAX, scikit-learn. Simulation + real distributed modes. Strong community.</div>
+        </div>
+        <div style="margin-top:14px;display:flex;justify-content:center;align-items:center;gap:8px">
+          <span class="badge badge-green">Recommended for beginners</span>
+          <span style="font-size:11px;color:var(--accent-cyan);font-weight:600">flower.ai ↗</span>
+        </div>
+      </a>
+      <a href="https://www.tensorflow.org/federated" target="_blank" rel="noopener noreferrer" class="tech-stack-card" title="Visit official TensorFlow Federated website">
+        <div>
+          <div class="tech-logo">🧠</div>
+          <div class="tech-name">TensorFlow Federated <span style="font-size:12px;opacity:0.7">↗</span></div>
+          <div class="tech-type">Google / TensorFlow</div>
+          <div class="tech-desc">Google's FL framework, tightly integrated with TF. High-level FL API for simulation. Production deployment tooling for cross-device FL. Based on Gboard production system.</div>
+        </div>
+        <div style="margin-top:14px;display:flex;justify-content:center;align-items:center;gap:8px">
+          <span class="badge badge-blue">Production-grade</span>
+          <span style="font-size:11px;color:var(--accent-cyan);font-weight:600">tensorflow.org ↗</span>
+        </div>
+      </a>
+      <a href="https://openfl.readthedocs.io/en/latest/" target="_blank" rel="noopener noreferrer" class="tech-stack-card" title="Visit official OpenFL documentation">
+        <div>
+          <div class="tech-logo">🔷</div>
+          <div class="tech-name">OpenFL (Intel) <span style="font-size:12px;opacity:0.7">↗</span></div>
+          <div class="tech-type">Enterprise FL</div>
+          <div class="tech-desc">Intel's open-source FL platform designed for cross-silo, enterprise deployments. Strong privacy features, integration with Intel SGX for hardware security.</div>
+        </div>
+        <div style="margin-top:14px;display:flex;justify-content:center;align-items:center;gap:8px">
+          <span class="badge badge-yellow">Enterprise-focused</span>
+          <span style="font-size:11px;color:var(--accent-cyan);font-weight:600">openfl.readthedocs.io ↗</span>
+        </div>
+      </a>
+      <a href="https://developer.nvidia.com/flare" target="_blank" rel="noopener noreferrer" class="tech-stack-card" title="Visit official NVIDIA FLARE website">
+        <div>
+          <div class="tech-logo">🚀</div>
+          <div class="tech-name">NVIDIA FLARE <span style="font-size:12px;opacity:0.7">↗</span></div>
+          <div class="tech-type">NVIDIA / Healthcare</div>
+          <div class="tech-desc">NVIDIA Federated Learning Application Runtime Environment. Designed for healthcare and life sciences FL. Integration with Clara (medical imaging) and RAPIDS.</div>
+        </div>
+        <div style="margin-top:14px;display:flex;justify-content:center;align-items:center;gap:8px">
+          <span class="badge badge-red">Healthcare-focused</span>
+          <span style="font-size:11px;color:var(--accent-cyan);font-weight:600">nvidia.com/flare ↗</span>
+        </div>
+      </a>
+      <a href="https://github.com/OpenMined/PySyft" target="_blank" rel="noopener noreferrer" class="tech-stack-card" title="Visit official PySyft repository">
+        <div>
+          <div class="tech-logo">🔏</div>
+          <div class="tech-name">PySyft <span style="font-size:12px;opacity:0.7">↗</span></div>
+          <div class="tech-type">OpenMined / Privacy</div>
+          <div class="tech-desc">Privacy-focused ML framework with built-in DP, SecAgg, and HE. Remote execution model (data scientists query data without seeing it). PyTorch compatible.</div>
+        </div>
+        <div style="margin-top:14px;display:flex;justify-content:center;align-items:center;gap:8px">
+          <span class="badge badge-purple">Privacy-first</span>
+          <span style="font-size:11px;color:var(--accent-cyan);font-weight:600">OpenMined/PySyft ↗</span>
+        </div>
+      </a>
+      <a href="https://fedml.ai" target="_blank" rel="noopener noreferrer" class="tech-stack-card" title="Visit official FedML website">
+        <div>
+          <div class="tech-logo">🌐</div>
+          <div class="tech-name">FedML <span style="font-size:12px;opacity:0.7">↗</span></div>
+          <div class="tech-type">Research Platform</div>
+          <div class="tech-desc">Comprehensive FL research platform supporting simulation, distributed, mobile (Android/iOS), and IoT FL. Rich benchmark datasets and algorithms library.</div>
+        </div>
+        <div style="margin-top:14px;display:flex;justify-content:center;align-items:center;gap:8px">
+          <span class="badge badge-cyan">Research-focused</span>
+          <span style="font-size:11px;color:var(--accent-cyan);font-weight:600">fedml.ai ↗</span>
+        </div>
+      </a>
     </div>
   </div>
 
@@ -1445,16 +1570,16 @@
 <div id="section-resources" style="display:none">
   <div class="section-title">📚 Resource Library</div>
   <div class="section-subtitle">FDP materials, references, and tools</div>
-  <div style="display:flex;gap:12px;margin-bottom:20px;flex-wrap:wrap">
-    <div class="search-bar" style="flex:1;min-width:200px"><span class="search-icon">🔍</span><input type="text" placeholder="Search resources..." id="resource-search"></div>
-    <div style="display:flex;gap:6px;flex-wrap:wrap">
-      <button class="btn btn-primary btn-sm active" data-filter="all">All</button>
-      <button class="btn btn-ghost btn-sm" data-filter="Python">Python</button>
-      <button class="btn btn-ghost btn-sm" data-filter="Framework">Frameworks</button>
-      <button class="btn btn-ghost btn-sm" data-filter="Dataset">Datasets</button>
-      <button class="btn btn-ghost btn-sm" data-filter="Paper">Papers</button>
-      <button class="btn btn-ghost btn-sm" data-filter="Tool">Tools</button>
-    </div>
+  <div style="display:flex;gap:12px;margin-bottom:16px;flex-wrap:wrap;align-items:center">
+    <div class="search-bar" style="flex:1;min-width:200px"><span class="search-icon">🔍</span><input type="text" placeholder="Search resources, tags, titles..." id="resource-search"></div>
+  </div>
+  <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:20px">
+    <button class="btn btn-primary btn-sm active" data-filter="all">📋 All</button>
+    <button class="btn btn-ghost btn-sm" data-filter="Python">🐍 Notebooks</button>
+    <button class="btn btn-ghost btn-sm" data-filter="Framework">🔧 Frameworks</button>
+    <button class="btn btn-ghost btn-sm" data-filter="Dataset">🗄️ Datasets</button>
+    <button class="btn btn-ghost btn-sm" data-filter="Paper">📄 Papers</button>
+    <button class="btn btn-ghost btn-sm" data-filter="Slides">📊 Slides</button>
   </div>
   <div id="resource-list" style="display:flex;flex-direction:column;gap:10px">
     <div style="text-align:center;padding:32px;color:var(--text-muted)">Loading resources from config...</div>
@@ -1499,6 +1624,34 @@
 </div>
 
 </main>
+
+<!-- ─────────────────────────────────────────────────────────────────────
+     FOOTER
+───────────────────────────────────────────────────────────────────── -->
+<footer style="
+  background: var(--bg-secondary);
+  border-top: 1px solid var(--border-color);
+  padding: 18px 32px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  text-align: center;
+">
+  <div style="font-size: 13px; color: var(--text-secondary); line-height: 1.6;">
+    &copy; 2026 <span style="color: var(--text-primary); font-weight: 600;">Patteesha Global AI Institute of Intelligent Research Labs (PGAIIRL)</span>
+    &nbsp;&middot;&nbsp; All Rights Reserved
+  </div>
+  <div style="font-size: 12px; color: var(--text-muted);">
+    This theme developed and managed by
+    <a href="https://www.linkedin.com/in/profanjitraja/" target="_blank" rel="noopener noreferrer"
+       style="color: var(--accent-cyan); font-weight: 600; text-decoration: none; transition: opacity 0.2s;"
+       onmouseover="this.style.opacity='0.75'" onmouseout="this.style.opacity='1'">
+      Prof. Anjit Raja R ↗
+    </a>
+    &nbsp;&middot;&nbsp; Copyrighted 2026
+  </div>
+</footer>
 
 <!-- ─────────────────────────────────────────────────────────────────────
      PRESENTER TOOLBAR

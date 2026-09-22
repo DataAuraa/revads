@@ -351,24 +351,78 @@ function initAccordions() {
 }
 
 // ── Resource library ─────────────────────────────────────────────────────────
+const FILTER_TYPE_MAP = {
+  'all':        null,
+  'Python':     ['notebook'],
+  'Framework':  ['tool'],
+  'Dataset':    ['dataset'],
+  'Paper':      ['paper'],
+  'Slides':     ['slides', 'notes']
+};
+
+const TYPE_BADGE = {
+  paper:    { label: '📄 Paper',    color: 'badge-blue'   },
+  notebook: { label: '🐍 Notebook', color: 'badge-green'  },
+  dataset:  { label: '🗄️ Dataset',  color: 'badge-purple' },
+  tool:     { label: '🔧 Tool',     color: 'badge-cyan'   },
+  slides:   { label: '📊 Slides',   color: 'badge-yellow' },
+  notes:    { label: '📝 Notes',    color: 'badge-yellow' }
+};
+
 function buildResourceLibrary() {
   const cfg = window.FDP_CONFIG;
   if (!cfg || !cfg.resources) return;
   const container = document.getElementById('resource-list');
   if (!container) return;
-  container.innerHTML = cfg.resources.map(r => `
-    <div class="resource-card" data-category="${r.category}">
+
+  container.innerHTML = cfg.resources.map(r => {
+    const typeMeta = TYPE_BADGE[r.type] || { label: r.type || 'Resource', color: 'badge-blue' };
+    const tagsHtml = (r.tags || []).slice(0, 3).map(t =>
+      `<span class="badge badge-gray" style="font-size:10px;padding:2px 6px">${t}</span>`
+    ).join('');
+
+    let actionHtml = '';
+    if (r.url) {
+      const isExternal = r.external || r.url.startsWith('http');
+      if (isExternal) {
+        actionHtml = `<a href="${r.url}" target="_blank" rel="noopener noreferrer" class="btn btn-sm btn-secondary" style="white-space:nowrap">🔗 Open ↗</a>`;
+      } else if (r.downloadable) {
+        actionHtml = `
+          <a href="${r.url}" target="_blank" class="btn btn-sm btn-secondary" style="white-space:nowrap">👁️ View PDF</a>
+          <a href="${r.url}" download class="btn btn-sm btn-ghost" style="white-space:nowrap;font-size:11px">⬇️ Download</a>`;
+      } else {
+        actionHtml = `<a href="${r.url}" target="_blank" class="btn btn-sm btn-secondary" style="white-space:nowrap">👁️ View</a>`;
+      }
+    } else {
+      actionHtml = `<span class="badge badge-gray">Coming Soon</span>`;
+    }
+
+    const colabHtml = r.colab
+      ? `<a href="${r.colab}" target="_blank" rel="noopener noreferrer" class="btn btn-sm btn-ghost" style="white-space:nowrap;font-size:11px">▶ Colab</a>`
+      : '';
+
+    const metaHtml = [
+      r.format ? `<span style="font-size:11px;color:var(--text-muted)">${r.format}</span>` : '',
+      r.size   ? `<span style="font-size:11px;color:var(--text-muted)">${r.size}</span>`   : '',
+      r.install ? `<code style="font-size:10px;background:var(--bg-secondary);padding:2px 6px;border-radius:4px">${r.install}</code>` : ''
+    ].filter(Boolean).join('<span style="color:var(--border-color);margin:0 4px">|</span>');
+
+    return `
+    <div class="resource-card" data-category="${r.type}" data-tags="${(r.tags||[]).join(' ')}">
       <div class="resource-icon">${r.icon || '📄'}</div>
       <div class="resource-info">
         <div class="resource-title">${r.title}</div>
-        <div class="resource-desc">${r.description || ''}</div>
+        <div class="resource-desc" style="margin-bottom:6px">${r.description || ''}</div>
+        ${metaHtml ? `<div style="margin-bottom:6px">${metaHtml}</div>` : ''}
+        <div style="display:flex;flex-wrap:wrap;gap:4px;margin-top:4px">${tagsHtml}</div>
       </div>
-      <div style="display:flex;flex-direction:column;gap:6px;align-items:flex-end">
-        <span class="badge badge-blue">${r.category}</span>
-        ${r.url ? `<a href="${r.url}" target="_blank" class="btn btn-sm btn-secondary">View</a>` : '<span class="badge badge-gray">Coming Soon</span>'}
+      <div style="display:flex;flex-direction:column;gap:6px;align-items:flex-end;min-width:fit-content">
+        <span class="badge ${typeMeta.color}">${typeMeta.label}</span>
+        ${actionHtml}
+        ${colabHtml}
       </div>
-    </div>
-  `).join('');
+    </div>`;
+  }).join('');
 }
 
 // ── Resource search / filter ──────────────────────────────────────────────────
@@ -378,17 +432,31 @@ function initSearchFilter() {
     searchInput.addEventListener('input', () => {
       const q = searchInput.value.toLowerCase();
       document.querySelectorAll('.resource-card').forEach(card => {
-        card.style.display = card.textContent.toLowerCase().includes(q) ? '' : 'none';
+        const text = (card.textContent + ' ' + (card.getAttribute('data-tags') || '')).toLowerCase();
+        card.style.display = text.includes(q) ? '' : 'none';
       });
     });
   }
+
   document.querySelectorAll('[data-filter]').forEach(btn => {
     btn.addEventListener('click', () => {
-      document.querySelectorAll('[data-filter]').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      const cat = btn.getAttribute('data-filter');
+      document.querySelectorAll('[data-filter]').forEach(b => {
+        b.classList.remove('active', 'btn-primary');
+        b.classList.add('btn-ghost');
+      });
+      btn.classList.remove('btn-ghost');
+      btn.classList.add('active', 'btn-primary');
+
+      const filterKey = btn.getAttribute('data-filter');
+      const allowedTypes = FILTER_TYPE_MAP[filterKey] || null;
+
       document.querySelectorAll('.resource-card').forEach(card => {
-        card.style.display = (cat === 'all' || card.getAttribute('data-category') === cat) ? '' : 'none';
+        const cat = card.getAttribute('data-category');
+        if (!allowedTypes) {
+          card.style.display = '';
+        } else {
+          card.style.display = allowedTypes.includes(cat) ? '' : 'none';
+        }
       });
     });
   });
@@ -563,7 +631,7 @@ function onSectionActivate(sectionId) {
     if (window.CodeLab) CodeLab.init();
   }
   if (sectionId === 'quiz') {
-    if (window.QuizEngine) QuizEngine.init();
+    if (window.QuizEngine) window.QuizEngine.init();
   }
   if (sectionId === 'dashboard') {
     if (window.FDPTimer) FDPTimer.startCountdown();

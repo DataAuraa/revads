@@ -942,6 +942,331 @@ class FLSimulator {
     const el = document.getElementById('fl-sim-global-loss');
     if (el) el.textContent = loss.toFixed(4);
   }
+
+  // ─────────────────────────────────────────────────────────────────────────────
+  // FL LAB SIMULATION ENGINE
+  // ─────────────────────────────────────────────────────────────────────────────
+
+  ensureReady() {
+    if (!this._accuracyChart) {
+      this.initCharts();
+    }
+    this.showNonIIDChart('iid');
+  }
+
+  startLab(cfg = {}) {
+    this.resetLab();
+
+    const numClients = cfg.numClients || parseInt(document.getElementById('lab-clients')?.value) || 5;
+    const numRounds  = cfg.numRounds || parseInt(document.getElementById('lab-rounds')?.value) || 15;
+    const epochs     = cfg.localEpochs || parseInt(document.getElementById('lab-epochs')?.value) || 5;
+    const dist       = cfg.distribution || document.getElementById('lab-distribution')?.value || 'iid';
+
+    const roundEl = document.getElementById(cfg.outputRound || 'lab-round');
+    const accEl   = document.getElementById(cfg.outputAcc || 'lab-acc');
+    const chartCanvas = document.getElementById(cfg.chartId || 'lab-accuracy-chart');
+
+    if (!chartCanvas) return;
+
+    if (this._labChart) {
+      this._labChart.destroy();
+      this._labChart = null;
+    }
+
+    const isNonIID = (dist === 'noniid');
+    const targetAcc = isNonIID ? 82.5 : 94.0;
+
+    const datasets = [
+      {
+        label: `Global Model (${dist.toUpperCase()})`,
+        data: [],
+        borderColor: isNonIID ? '#ef4444' : '#10b981',
+        backgroundColor: isNonIID ? 'rgba(239, 68, 68, 0.12)' : 'rgba(16, 185, 129, 0.12)',
+        borderWidth: 2.5,
+        tension: 0.35,
+        fill: true,
+        pointRadius: 4,
+        pointHoverRadius: 6
+      }
+    ];
+
+    if (isNonIID) {
+      const refData = [];
+      for (let r = 1; r <= numRounds; r++) {
+        const prog = r / numRounds;
+        const ideal = 94.0 * (1 - Math.exp(-3.8 * prog));
+        refData.push(fmt(ideal, 1));
+      }
+      datasets.push({
+        label: 'Ideal IID Reference',
+        data: refData,
+        borderColor: '#3b82f6',
+        borderDash: [5, 5],
+        borderWidth: 1.5,
+        tension: 0.35,
+        fill: false,
+        pointRadius: 0
+      });
+    }
+
+    this._labChart = new Chart(chartCanvas.getContext('2d'), {
+      type: 'line',
+      data: { labels: [], datasets },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        animation: { duration: 150 },
+        scales: {
+          x: {
+            title: { display: true, text: 'Communication Round', color: '#94a3b8' },
+            grid: { color: 'rgba(255,255,255,0.07)' },
+            ticks: { color: '#94a3b8' }
+          },
+          y: {
+            min: 0,
+            max: 100,
+            title: { display: true, text: 'Test Accuracy (%)', color: '#94a3b8' },
+            grid: { color: 'rgba(255,255,255,0.07)' },
+            ticks: { color: '#94a3b8' }
+          }
+        },
+        plugins: {
+          legend: { labels: { color: '#94a3b8' } },
+          tooltip: {
+            callbacks: {
+              label: (ctx) => `${ctx.dataset.label}: ${ctx.parsed.y}%`
+            }
+          }
+        }
+      }
+    });
+
+    const startBtn = document.querySelector('button[onclick="startLabSimulation()"]');
+    if (startBtn) {
+      startBtn.disabled = true;
+      startBtn.innerHTML = '⏳ Simulating...';
+    }
+
+    const timelineItems = document.querySelectorAll('#section-fl-lab .timeline-item');
+    const setTimelineStep = (stepIdx) => {
+      timelineItems.forEach((item, idx) => {
+        const dot = item.querySelector('.timeline-dot');
+        if (!dot) return;
+        dot.className = 'timeline-dot';
+        if (idx + 1 < stepIdx) {
+          dot.classList.add('done');
+        } else if (idx + 1 === stepIdx) {
+          dot.classList.add('active', 'pulse');
+        }
+      });
+    };
+
+    setTimelineStep(1);
+    setTimeout(() => setTimelineStep(2), 200);
+    setTimeout(() => setTimelineStep(3), 400);
+
+    let currentRound = 0;
+    this._labState = { isRunning: true, numRounds };
+
+    const k = (2.2 + (epochs * 0.18)) * (isNonIID ? 0.75 : 1.0);
+    const noiseMagnitude = isNonIID ? 1.8 : 0.6;
+
+    const runNextRound = () => {
+      if (!this._labState || !this._labState.isRunning) return;
+      currentRound++;
+
+      const subStep = (currentRound % 5) + 4;
+      setTimelineStep(subStep);
+
+      const progress = currentRound / numRounds;
+      let accVal = targetAcc * (1 - Math.exp(-k * progress));
+      const roundNoise = (Math.random() - 0.5) * noiseMagnitude;
+      accVal = clamp(accVal + roundNoise, 25, targetAcc + 1.5);
+
+      if (roundEl) roundEl.textContent = `${currentRound} / ${numRounds}`;
+      if (accEl) accEl.textContent = `${accVal.toFixed(1)}%`;
+
+      if (this._labChart) {
+        this._labChart.data.labels.push(`R${currentRound}`);
+        this._labChart.data.datasets[0].data.push(fmt(accVal, 1));
+        this._labChart.update('none');
+      }
+
+      if (currentRound < numRounds) {
+        this._labTimer = setTimeout(runNextRound, 250);
+      } else {
+        this._labState.isRunning = false;
+        setTimelineStep(9);
+        if (startBtn) {
+          startBtn.disabled = false;
+          startBtn.innerHTML = '▶ Start Lab Experiment';
+        }
+        if (typeof showNotification === 'function') {
+          showNotification(`FL Lab Experiment Complete! Final Accuracy: ${accVal.toFixed(1)}% (${dist.toUpperCase()})`, 'success');
+        }
+      }
+    };
+
+    this._labTimer = setTimeout(runNextRound, 700);
+  }
+
+  resetLab() {
+    if (this._labTimer) {
+      clearTimeout(this._labTimer);
+      this._labTimer = null;
+    }
+    if (this._labState) {
+      this._labState.isRunning = false;
+    }
+
+    const roundEl = document.getElementById('lab-round');
+    const accEl   = document.getElementById('lab-acc');
+    if (roundEl) roundEl.textContent = '0';
+    if (accEl) accEl.textContent = '--';
+
+    const startBtn = document.querySelector('button[onclick="startLabSimulation()"]');
+    if (startBtn) {
+      startBtn.disabled = false;
+      startBtn.innerHTML = '▶ Start Lab Experiment';
+    }
+
+    if (this._labChart) {
+      this._labChart.destroy();
+      this._labChart = null;
+    }
+
+    const timelineItems = document.querySelectorAll('#section-fl-lab .timeline-item');
+    timelineItems.forEach((item, idx) => {
+      const dot = item.querySelector('.timeline-dot');
+      if (!dot) return;
+      dot.className = 'timeline-dot';
+      if (idx === 0 || idx === 1) dot.classList.add('done');
+      else if (idx === 2) dot.classList.add('active');
+    });
+  }
+
+  showNonIIDChart(mode = 'iid') {
+    const distCanvas = document.getElementById('noniid-distribution-chart');
+    const convCanvas = document.getElementById('noniid-convergence-chart');
+    if (!distCanvas || !convCanvas || typeof Chart === 'undefined') return;
+
+    const iidBtn = document.getElementById('show-iid-btn');
+    const nonIidBtn = document.getElementById('show-noniid-btn');
+    if (iidBtn && nonIidBtn) {
+      if (mode === 'iid') {
+        iidBtn.className = 'btn btn-primary';
+        nonIidBtn.className = 'btn btn-secondary';
+      } else {
+        iidBtn.className = 'btn btn-secondary';
+        nonIidBtn.className = 'btn btn-primary';
+      }
+    }
+
+    if (this._nonIIDDistChart) {
+      this._nonIIDDistChart.destroy();
+      this._nonIIDDistChart = null;
+    }
+
+    const clients = ['Client 1', 'Client 2', 'Client 3', 'Client 4', 'Client 5'];
+    let classA, classB, classC;
+    if (mode === 'iid') {
+      classA = [33, 34, 33, 33, 34];
+      classB = [33, 33, 34, 33, 33];
+      classC = [34, 33, 33, 34, 33];
+    } else {
+      classA = [78, 5, 10, 33, 60];
+      classB = [15, 82, 8, 34, 30];
+      classC = [7, 13, 82, 33, 10];
+    }
+
+    this._nonIIDDistChart = new Chart(distCanvas.getContext('2d'), {
+      type: 'bar',
+      data: {
+        labels: clients,
+        datasets: [
+          { label: 'Class A (%)', data: classA, backgroundColor: '#3b82f6' },
+          { label: 'Class B (%)', data: classB, backgroundColor: '#10b981' },
+          { label: 'Class C (%)', data: classC, backgroundColor: '#f59e0b' }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+          x: { stacked: true, grid: { color: 'rgba(255,255,255,0.07)' }, ticks: { color: '#94a3b8' } },
+          y: { stacked: true, max: 100, title: { display: true, text: 'Data Proportion (%)', color: '#94a3b8' }, ticks: { color: '#94a3b8' } }
+        },
+        plugins: { legend: { labels: { color: '#94a3b8' } } }
+      }
+    });
+
+    if (this._nonIIDConvChart) {
+      this._nonIIDConvChart.destroy();
+      this._nonIIDConvChart = null;
+    }
+
+    const rounds = Array.from({ length: 15 }, (_, i) => `R${i + 1}`);
+    const iidAcc = [35.2, 54.8, 68.3, 76.5, 82.1, 85.9, 88.4, 90.1, 91.5, 92.4, 93.1, 93.7, 94.0, 94.2, 94.5];
+    const nonIidAcc = [33.1, 46.2, 57.0, 64.2, 69.8, 73.1, 75.4, 77.2, 78.5, 79.6, 80.4, 81.1, 81.6, 82.0, 82.3];
+
+    const convDatasets = [
+      {
+        label: 'IID Balanced FedAvg',
+        data: iidAcc,
+        borderColor: '#10b981',
+        backgroundColor: 'rgba(16,185,129,0.1)',
+        tension: 0.35,
+        fill: mode === 'iid',
+        borderWidth: mode === 'iid' ? 3 : 1.5
+      }
+    ];
+
+    if (mode === 'noniid') {
+      convDatasets.push({
+        label: 'Non-IID Skewed FedAvg (Client Drift)',
+        data: nonIidAcc,
+        borderColor: '#ef4444',
+        backgroundColor: 'rgba(239,68,68,0.15)',
+        tension: 0.35,
+        fill: true,
+        borderWidth: 3
+      });
+    }
+
+    this._nonIIDConvChart = new Chart(convCanvas.getContext('2d'), {
+      type: 'line',
+      data: { labels: rounds, datasets: convDatasets },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+          x: { title: { display: true, text: 'Round', color: '#94a3b8' }, ticks: { color: '#94a3b8' } },
+          y: { min: 20, max: 100, title: { display: true, text: 'Accuracy (%)', color: '#94a3b8' }, ticks: { color: '#94a3b8' } }
+        },
+        plugins: { legend: { labels: { color: '#94a3b8' } } }
+      }
+    });
+  }
+
+  // Static bridges
+  static startLab(cfg) {
+    if (!window.flSimulator) window.flSimulator = new FLSimulator();
+    return window.flSimulator.startLab(cfg);
+  }
+
+  static resetLab() {
+    if (window.flSimulator) return window.flSimulator.resetLab();
+  }
+
+  static showNonIIDChart(mode) {
+    if (!window.flSimulator) window.flSimulator = new FLSimulator();
+    return window.flSimulator.showNonIIDChart(mode);
+  }
+
+  static ensureReady() {
+    if (!window.flSimulator) window.flSimulator = new FLSimulator();
+    return window.flSimulator.ensureReady();
+  }
 }
 
 // ─────────────────────────────────────────────────────────────────────────────

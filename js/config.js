@@ -832,7 +832,7 @@ window.FDP_CONFIG = {
       tags:        ['slides', 'day1', 'foundation', 'fedavg'],
       size:        '8.2 MB',
       format:      'PDF',
-      url:         'assets/slides/day1_foundations.pdf',
+      url:         'PPT/REVA_FDP_Day1_Federated_Learning.pdf',
       downloadable: true
     },
     {
@@ -1074,6 +1074,193 @@ window.FDP_CONFIG = {
       downloadable: false,
       external:    true,
       install:     'pip install syft'
+    },
+    {
+      id:          'tool-openfl',
+      type:        'tool',
+      icon:        '🔧',
+      day:         4,
+      title:       'OpenFL (Intel) — Open Federated Learning',
+      description: 'Intel\'s open-source cross-silo FL framework with built-in SGX hardware security, ' +
+                   'plan-based workflows, and support for PyTorch and TensorFlow.',
+      tags:        ['tool', 'openfl', 'intel', 'enterprise', 'cross-silo'],
+      format:      'Python Package',
+      url:         'https://openfl.readthedocs.io/en/latest/',
+      downloadable: false,
+      external:    true,
+      install:     'pip install openfl'
+    },
+    {
+      id:          'tool-nvflare',
+      type:        'tool',
+      icon:        '🔧',
+      day:         4,
+      title:       'NVIDIA FLARE — Federated Learning Application Runtime Environment',
+      description: 'NVIDIA\'s production-grade FL framework optimised for healthcare and life sciences. ' +
+                   'Integrates with Clara medical imaging pipelines and RAPIDS for GPU-accelerated FL.',
+      tags:        ['tool', 'nvidia', 'flare', 'healthcare', 'gpu'],
+      format:      'Python Package',
+      url:         'https://developer.nvidia.com/flare',
+      downloadable: false,
+      external:    true,
+      install:     'pip install nvflare'
+    },
+
+    /* ── RESEARCH PAPERS (Real, Live Links) ──────────────────────────────── */
+    {
+      id:          'paper-fl-original',
+      type:        'paper',
+      icon:        '📄',
+      day:         1,
+      title:       'McMahan et al. (2017) — Communication-Efficient Learning of Deep Networks from Decentralized Data (FedAvg)',
+      description: 'The seminal FedAvg paper. Introduces Federated Averaging and benchmarks it on ' +
+                   'MNIST and Shakespeare datasets with 100+ clients. ' +
+                   'Foundational reading for any FL researcher or practitioner.',
+      tags:        ['paper', 'fedavg', 'seminal', 'google', 'day1'],
+      format:      'PDF — arXiv:1602.05629',
+      url:         'https://arxiv.org/abs/1602.05629',
+      downloadable: false,
+      external:    true
+    },
+    {
+      id:          'paper-dp-fl-geyer',
+      type:        'paper',
+      icon:        '📄',
+      day:         2,
+      title:       'Geyer et al. (2017) — Differentially Private Federated Learning: A Client Level Perspective',
+      description: 'Introduces client-level differential privacy in FL. Applies DP to the entire ' +
+                   'client update instead of individual gradients, improving practical privacy guarantees.',
+      tags:        ['paper', 'differential-privacy', 'fl', 'day2'],
+      format:      'PDF — arXiv:1712.07557',
+      url:         'https://arxiv.org/abs/1712.07557',
+      downloadable: false,
+      external:    true
+    },
+    {
+      id:          'paper-secagg-bonawitz',
+      type:        'paper',
+      icon:        '📄',
+      day:         2,
+      title:       'Bonawitz et al. (2017) — Practical Secure Aggregation for Privacy-Preserving Machine Learning',
+      description: 'Introduces the Secure Aggregation protocol used in Google\'s production FL. ' +
+                   'Covers Shamir secret sharing, pairwise masking, and dropout-tolerant design.',
+      tags:        ['paper', 'secure-aggregation', 'cryptography', 'google', 'day2'],
+      format:      'PDF — ACM CCS 2017',
+      url:         'https://dl.acm.org/doi/10.1145/3133956.3133982',
+      downloadable: false,
+      external:    true
+    },
+    {
+      id:          'paper-fedprox',
+      type:        'paper',
+      icon:        '📄',
+      day:         3,
+      title:       'Li et al. (2020) — Federated Optimization in Heterogeneous Networks (FedProx)',
+      description: 'Introduces FedProx: adds a proximal regularisation term to bound client drift ' +
+                   'under non-IID data and partial participation. Convergence guarantees for heterogeneous FL.',
+      tags:        ['paper', 'fedprox', 'non-iid', 'convergence', 'day3'],
+      format:      'PDF — MLSys 2020',
+      url:         'https://arxiv.org/abs/1812.06127',
+      downloadable: false,
+      external:    true
+    },
+    {
+      id:          'paper-scaffold',
+      type:        'paper',
+      icon:        '📄',
+      day:         3,
+      title:       'Karimireddy et al. (2020) — SCAFFOLD: Stochastic Controlled Averaging for Federated Learning',
+      description: 'SCAFFOLD uses server and client control variates to correct client drift, ' +
+                   'achieving linear speedup even under heterogeneous data distributions.',
+      tags:        ['paper', 'scaffold', 'non-iid', 'variance-reduction', 'day3'],
+      format:      'PDF — ICML 2020',
+      url:         'https://arxiv.org/abs/1910.06378',
+      downloadable: false,
+      external:    true
+    },
+    {
+      id:          'paper-gradient-leakage',
+      type:        'paper',
+      icon:        '📄',
+      day:         3,
+      title:       'Zhu et al. (2019) — Deep Leakage from Gradients',
+      description: 'Demonstrates that private training data (including high-res images and text) can be ' +
+                   'reconstructed pixel-by-pixel from gradients alone. Motivates Secure Aggregation + DP.',
+      tags:        ['paper', 'privacy', 'attack', 'gradient-leakage', 'threat-model'],
+      format:      'PDF — NeurIPS 2019',
+      url:         'https://arxiv.org/abs/1906.08935',
+      downloadable: false,
+      external:    true
+    },
+    {
+      id:          'paper-fl-at-scale',
+      type:        'paper',
+      icon:        '📄',
+      day:         4,
+      title:       'Bonawitz et al. (2019) — Towards Federated Learning at Scale: A System Design',
+      description: 'Google\'s production FL system paper. Covers the real-world challenges of deploying ' +
+                   'FL to millions of Android devices: device selection, system efficiency, and FL lifecycle.',
+      tags:        ['paper', 'production', 'system-design', 'google', 'cross-device'],
+      format:      'PDF — MLSys 2019',
+      url:         'https://arxiv.org/abs/1902.01046',
+      downloadable: false,
+      external:    true
+    },
+    {
+      id:          'paper-personalized-fl',
+      type:        'paper',
+      icon:        '📄',
+      day:         5,
+      title:       'Fallah et al. (2020) — Personalized Federated Learning with Theoretical Guarantees (pFedMe / Per-FedAvg)',
+      description: 'Applies MAML-style meta-learning to FL for personalization. Each client learns ' +
+                   'a global initialization that can be rapidly adapted to local data distributions.',
+      tags:        ['paper', 'personalization', 'meta-learning', 'federated', 'day5'],
+      format:      'PDF — NeurIPS 2020',
+      url:         'https://arxiv.org/abs/2002.07948',
+      downloadable: false,
+      external:    true
+    },
+    {
+      id:          'paper-fl-llm',
+      type:        'paper',
+      icon:        '📄',
+      day:         5,
+      title:       'Ye et al. (2024) — OpenFedLLM: Training Large Language Models on Decentralized Private Data via Federated Learning',
+      description: 'Explores federated fine-tuning of LLMs (e.g., LLaMA, Mistral) across private institutional ' +
+                   'datasets. Combines LoRA adapters with FedAvg for efficient LLM federation.',
+      tags:        ['paper', 'llm', 'large-language-models', 'federated', 'fine-tuning', 'day5'],
+      format:      'PDF — arXiv:2402.06954',
+      url:         'https://arxiv.org/abs/2402.06954',
+      downloadable: false,
+      external:    true
+    },
+    {
+      id:          'paper-ditto',
+      type:        'paper',
+      icon:        '📄',
+      day:         3,
+      title:       'Li et al. (2021) — Ditto: Fair and Robust Federated Learning Through Personalization',
+      description: 'Ditto jointly trains a global FL model and a personalised local model per client. ' +
+                   'Improves fairness across heterogeneous clients while remaining robust to Byzantine attacks.',
+      tags:        ['paper', 'ditto', 'personalization', 'fairness', 'robustness'],
+      format:      'PDF — ICML 2021',
+      url:         'https://arxiv.org/abs/2012.04235',
+      downloadable: false,
+      external:    true
+    },
+    {
+      id:          'paper-fl-healthcare',
+      type:        'paper',
+      icon:        '📄',
+      day:         4,
+      title:       'Rieke et al. (2020) — The Future of Digital Health with Federated Learning',
+      description: 'Surveys FL in healthcare: brain tumour segmentation (FeTS), COVID-19 imaging, ' +
+                   'patient risk stratification. Addresses regulatory compliance (GDPR, HIPAA) in medical FL.',
+      tags:        ['paper', 'healthcare', 'medical-imaging', 'survey', 'gdpr'],
+      format:      'PDF — npj Digital Medicine 2020',
+      url:         'https://www.nature.com/articles/s41746-020-00323-1',
+      downloadable: false,
+      external:    true
     }
   ],
 

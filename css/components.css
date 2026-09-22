@@ -273,9 +273,23 @@
   padding: 20px;
   text-align: center;
   transition: var(--transition);
+  text-decoration: none;
+  color: inherit;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  cursor: pointer;
+  position: relative;
 }
-.tech-stack-card:hover { border-color: var(--accent-cyan); transform: translateY(-2px); }
-.tech-name    { font-size: 15px; font-weight: 700; margin: 10px 0 4px; }
+.tech-stack-card:hover {
+  border-color: var(--accent-cyan);
+  transform: translateY(-3px);
+  box-shadow: 0 8px 24px rgba(0, 212, 255, 0.15);
+}
+.tech-stack-card:hover .tech-name {
+  color: var(--accent-cyan);
+}
+.tech-name    { font-size: 15px; font-weight: 700; margin: 10px 0 4px; transition: color 0.2s ease; }
 .tech-type    { font-size: 11px; color: var(--text-muted); margin-bottom: 8px; }
 .tech-desc    { font-size: 12px; color: var(--text-secondary); line-height: 1.5; }
 .tech-logo    { font-size: 36px; }
@@ -736,3 +750,152 @@ body.presenter-mode .main-content { padding-bottom: 80px; }
 }
 .form-label { font-size: 13px; font-weight: 600; color: var(--text-primary); margin-bottom: 6px; display: block; }
 .form-group { margin-bottom: 18px; }
+
+/* ── In-Portal Python Terminal & Runner ────────────────────── */
+.python-terminal {
+  background: #080c14;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  box-shadow: 0 8px 30px rgba(0,0,0,0.5);
+  display: flex;
+  flex-direction: column;
+}
+.terminal-header {
+  background: #0f172a;
+  border-bottom: 1px solid var(--border-color);
+  padding: 8px 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  user-select: none;
+}
+.terminal-dots {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+.terminal-dot {
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  display: inline-block;
+}
+.terminal-dot.red { background: #ff5f56; }
+.terminal-dot.yellow { background: #ffbd2e; }
+.terminal-dot.green { background: #27c93f; }
+.terminal-title {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text-muted);
+  letter-spacing: 0.05em;
+}
+.terminal-body {
+  padding: 14px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  line-height: 1.6;
+  min-height: 220px;
+  max-height: 380px;
+  overflow-y: auto;
+  color: #cbd5e1;
+  background: #070b12;
+}
+.term-line {
+  margin-bottom: 2px;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+.term-prompt { color: #10b981; font-weight: 700; }
+.term-info   { color: #38bdf8; }
+.term-success{ color: #4ade80; }
+.term-warn   { color: #fbbf24; }
+.term-error  { color: #f87171; }
+.term-dim    { color: #64748b; }
+.term-num    { color: #c084fc; font-weight: 600; }
+.term-bold   { font-weight: 700; color: #f8fafc; }
+
+.python-editor-textarea {
+  width: 100%;
+  min-height: 340px;
+  max-height: 500px;
+  background: #0f172a;
+  border: 1px solid var(--accent-blue);
+  border-radius: var(--radius-sm);
+  color: #f8fafc;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  line-height: 1.5;
+  padding: 12px;
+  resize: vertical;
+  outline: none;
+  display: none;
+}
+
+/* ── Terminal tabs ────────────────────────────────────────── */
+.runner-tabs {
+  display: flex;
+  gap: 4px;
+  background: var(--bg-secondary);
+  padding: 4px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-color);
+  margin-bottom: 12px;
+}
+.runner-tab-btn {
+  flex: 1;
+  padding: 6px 12px;
+  font-size: 12px;
+  font-weight: 600;
+  border: none;
+  background: transparent;
+  color: var(--text-muted);
+  border-radius: 4px;
+  cursor: pointer;
+  transition: var(--transition);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+.runner-tab-btn.active {
+  background: var(--bg-card);
+  color: var(--text-primary);
+  box-shadow: var(--shadow-sm);
+}
+.runner-tab-btn:hover:not(.active) {
+  color: var(--text-secondary);
+}
+
+/* ── Timeline pulsing dot for active simulation ──────────── */
+.timeline-dot.pulse {
+  background: var(--accent-blue);
+  box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.7);
+  animation: pulse-ring 1.2s infinite;
+}
+@keyframes pulse-ring {
+  0%   { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.7); }
+  70%  { box-shadow: 0 0 0 10px rgba(59, 130, 246, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0); }
+}
+
+/* ── Confusion matrix grid ───────────────────────────────── */
+.cm-table {
+  border-collapse: collapse;
+  margin: 12px auto;
+  font-family: var(--font-mono);
+  font-size: 12px;
+}
+.cm-table th, .cm-table td {
+  padding: 10px 16px;
+  text-align: center;
+  border: 1px solid var(--border-color);
+}
+.cm-table th {
+  background: var(--bg-secondary);
+  color: var(--accent-blue);
+  font-weight: 700;
+}
+.cm-cell-high { background: rgba(59,130,246,0.35); font-weight: 700; color: #fff; }
+.cm-cell-low  { background: rgba(59,130,246,0.06); color: var(--text-secondary); }
+
