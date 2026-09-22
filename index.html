@@ -1,0 +1,1453 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Federated Learning FDP — REVA University 2026</title>
+<meta name="description" content="Faculty Development Programme: Federated Learning for Secure and Distributed AI Systems — REVA University, Bengaluru">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
+<link rel="stylesheet" href="css/main.css">
+<link rel="stylesheet" href="css/animations.css">
+<link rel="stylesheet" href="css/components.css">
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════════════════════════════
+     TOP HEADER
+═══════════════════════════════════════════════════════════════════════ -->
+<header class="top-header">
+  <div class="header-left">
+    <button class="btn btn-icon btn-ghost" id="hamburger-btn" title="Toggle Sidebar" aria-label="Toggle navigation">☰</button>
+    <div class="header-brand">
+      <span class="brand-logo">🎓</span>
+      <div>
+        <div class="brand-name">REVA University</div>
+        <div class="brand-sub">FDP 2026</div>
+      </div>
+    </div>
+  </div>
+  <div class="header-center">
+    <span id="header-section-title" class="header-section-title">Home</span>
+  </div>
+  <div class="header-right">
+    <div class="header-timer">
+      <span style="font-size:10px;color:var(--text-muted)">SESSION</span>
+      <span id="header-timer-compact" style="font-family:var(--font-mono);font-size:13px;font-weight:700;color:var(--accent-cyan)">--:--:--</span>
+    </div>
+    <button class="btn btn-sm btn-ghost" id="presenter-toggle" title="Toggle Presenter Mode (P)">📽️ Presenter Mode</button>
+  </div>
+</header>
+
+<!-- Sidebar overlay (mobile) -->
+<div id="sidebar-overlay" class="sidebar-overlay"></div>
+
+<!-- ═══════════════════════════════════════════════════════════════════════
+     SIDEBAR NAVIGATION
+═══════════════════════════════════════════════════════════════════════ -->
+<nav class="sidebar" id="nav-sidebar">
+  <div class="sidebar-inner">
+    <div class="sidebar-header">
+      <div style="font-size:11px;font-weight:700;text-transform:uppercase;color:var(--text-muted);letter-spacing:.1em">Navigation</div>
+    </div>
+
+    <div class="nav-section">
+      <a href="#home" data-nav="home" data-label="Home" class="nav-link active">🏠 Home</a>
+      <a href="#dashboard" data-nav="dashboard" data-label="Dashboard" class="nav-link">📊 Dashboard</a>
+    </div>
+
+    <div class="nav-section-label">DAY 1 — Foundations</div>
+    <div class="nav-section">
+      <a href="#day1" data-nav="day1" data-label="Day 1: AI Foundations" class="nav-link">🤖 AI Foundations</a>
+      <a href="#day1" data-nav="day1" class="nav-link nav-sub" onclick="setTimeout(()=>{document.querySelector('[data-tab=\'dist\']')?.click()},200)">🌐 Distributed Learning</a>
+      <a href="#day1" data-nav="day1" class="nav-link nav-sub" onclick="setTimeout(()=>{document.querySelector('[data-tab=\'compare\']')?.click()},200)">⚖️ Centralized vs FL</a>
+      <a href="#day1" data-nav="day1" class="nav-link nav-sub" onclick="setTimeout(()=>{document.querySelector('[data-tab=\'arch\']')?.click()},200)">🏗️ FL Architecture</a>
+      <a href="#day1" data-nav="day1" class="nav-link nav-sub" onclick="setTimeout(()=>{document.querySelector('[data-tab=\'sim\']')?.click()},200)">⚙️ FL Simulator</a>
+      <a href="#day1" data-nav="day1" class="nav-link nav-sub" onclick="setTimeout(()=>{document.querySelector('[data-tab=\'noniid\']')?.click()},200)">📊 Non-IID Simulator</a>
+      <a href="#day1" data-nav="day1" class="nav-link nav-sub" onclick="setTimeout(()=>{document.querySelector('[data-tab=\'usecases\']')?.click()},200)">🌍 Use Cases</a>
+    </div>
+
+    <div class="nav-section-label">DAY 2 — Privacy & Architectures</div>
+    <div class="nav-section">
+      <a href="#day2" data-nav="day2" data-label="Day 2: FL Architectures & Privacy" class="nav-link">📱 Cross-Device FL</a>
+      <a href="#day2" data-nav="day2" class="nav-link nav-sub" onclick="setTimeout(()=>{document.querySelector('[data-tab=\'silo\']')?.click()},200)">🏢 Cross-Silo FL</a>
+      <a href="#day2" data-nav="day2" class="nav-link nav-sub" onclick="setTimeout(()=>{document.querySelector('[data-tab=\'hybrid\']')?.click()},200)">🔀 Hybrid FL</a>
+      <a href="#day2" data-nav="day2" class="nav-link nav-sub" onclick="setTimeout(()=>{document.querySelector('[data-tab=\'dp\']')?.click()},200)">🔒 Differential Privacy</a>
+      <a href="#day2" data-nav="day2" class="nav-link nav-sub" onclick="setTimeout(()=>{document.querySelector('[data-tab=\'secagg\']')?.click()},200)">🛡️ Secure Aggregation</a>
+      <a href="#day2" data-nav="day2" class="nav-link nav-sub" onclick="setTimeout(()=>{document.querySelector('[data-tab=\'he\']')?.click()},200)">🔐 Homomorphic Enc.</a>
+      <a href="#day2" data-nav="day2" class="nav-link nav-sub" onclick="setTimeout(()=>{document.querySelector('[data-tab=\'threats\']')?.click()},200)">⚠️ Threat Models</a>
+      <a href="#day2" data-nav="day2" class="nav-link nav-sub" onclick="setTimeout(()=>{document.querySelector('[data-tab=\'comm\']')?.click()},200)">📡 Communication Eff.</a>
+    </div>
+
+    <div class="nav-section-label">Labs & Learning</div>
+    <div class="nav-section">
+      <a href="#fl-lab" data-nav="fl-lab" data-label="FL Training Lab" class="nav-link">🔬 FL Lab</a>
+      <a href="#python-lab" data-nav="python-lab" data-label="Python Lab" class="nav-link">🐍 Python Lab</a>
+      <a href="#experiments" data-nav="experiments" data-label="Experiments" class="nav-link">🧪 Experiments</a>
+      <a href="#mini-projects" data-nav="mini-projects" data-label="Mini Projects" class="nav-link">💡 Mini Projects</a>
+      <a href="#quiz" data-nav="quiz" data-label="Knowledge Quiz" class="nav-link">❓ Quiz</a>
+      <a href="#research" data-nav="research" data-label="Research Corner" class="nav-link">🔭 Research Corner</a>
+      <a href="#resources" data-nav="resources" data-label="Resources" class="nav-link">📚 Resources</a>
+      <a href="#feedback" data-nav="feedback" data-label="Feedback" class="nav-link">💬 Feedback</a>
+    </div>
+
+    <div class="sidebar-footer">
+      <div style="font-size:10px;color:var(--text-muted);line-height:1.5">
+        Press <kbd>P</kbd> for Presenter Mode<br>
+        Press <kbd>←/→</kbd> to navigate
+      </div>
+    </div>
+  </div>
+</nav>
+
+<!-- ═══════════════════════════════════════════════════════════════════════
+     MAIN CONTENT
+═══════════════════════════════════════════════════════════════════════ -->
+<main class="main-content">
+
+<!-- ─────────────────────────────────────────────────────────────────────
+     HOME SECTION
+───────────────────────────────────────────────────────────────────── -->
+<div id="section-home">
+  <!-- University Banner -->
+  <div class="hero-banner">
+    <div class="hero-banner-top">
+      <span class="badge badge-blue">Faculty Development Programme</span>
+      <span class="badge badge-green">22–26 September 2026</span>
+      <span class="badge badge-purple">Five-Day Online FDP</span>
+    </div>
+    <div class="hero-institution hero-title" data-fdp-institution>REVA University, Bengaluru</div>
+    <div class="hero-school hero-subtitle" data-fdp-school>School of Computer Science and Engineering</div>
+    <h1 class="hero-main-title shimmer-text hero-title" data-fdp-title>Federated Learning for Secure and Distributed AI Systems</h1>
+    <div class="hero-cta">
+      <button class="btn btn-primary btn-lg" data-goto="day1">🚀 Start Day 1</button>
+      <button class="btn btn-secondary btn-lg" data-goto="fl-lab">⚙️ Launch FL Simulator</button>
+      <button class="btn btn-ghost btn-lg" data-goto="python-lab">🐍 Python Lab</button>
+      <button class="btn btn-ghost btn-lg" data-goto="dashboard">📊 Dashboard</button>
+    </div>
+  </div>
+
+  <!-- Stats row -->
+  <div class="stat-row" style="margin-bottom:32px">
+    <div class="stat-item"><div class="stat-value">5</div><div class="stat-label">FDP Days</div></div>
+    <div class="stat-item"><div class="stat-value">2</div><div class="stat-label">Sessions by RP</div></div>
+    <div class="stat-item"><div class="stat-value">8</div><div class="stat-label">Experiments</div></div>
+    <div class="stat-item"><div class="stat-value">8</div><div class="stat-label">Mini Projects</div></div>
+    <div class="stat-item"><div class="stat-value">35+</div><div class="stat-label">Quiz Questions</div></div>
+    <div class="stat-item"><div class="stat-value">8</div><div class="stat-label">Python Demos</div></div>
+  </div>
+
+  <div class="grid-2" style="gap:24px;margin-bottom:32px">
+    <!-- Resource Person Card -->
+    <div class="card card-glow">
+      <div class="card-header">
+        <div class="card-title">👨‍🏫 Resource Person</div>
+        <span class="badge badge-blue">Day 1 & Day 2</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:18px;margin-bottom:16px">
+        <div style="width:64px;height:64px;border-radius:50%;background:linear-gradient(135deg,var(--accent-blue),var(--accent-cyan));display:flex;align-items:center;justify-content:center;font-size:28px;flex-shrink:0">👨‍💻</div>
+        <div>
+          <div style="font-size:20px;font-weight:800;color:var(--text-primary)" data-rp-name>Prof. (Dr.) Anjit Raja R</div>
+          <div style="font-size:12px;color:var(--accent-cyan);margin-top:2px" data-rp-role>Professor | AI/ML & Data Science Expert | Researcher | Trainer</div>
+          <div style="font-size:11px;color:var(--text-muted);margin-top:4px" data-rp-spec>AI/ML | Data Science | Generative AI | Intelligent Systems | IoT | Research & Innovation</div>
+        </div>
+      </div>
+      <p style="font-size:13px;color:var(--text-secondary);line-height:1.7" data-rp-bio>Prof. (Dr.) Anjit Raja R is an AI/ML and Data Science expert with deep expertise in Intelligent Systems, Generative AI, IoT, and Research & Innovation. As the resource person for this Faculty Development Programme, he brings cutting-edge research knowledge and practical implementation experience to federated learning and privacy-preserving AI.</p>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:12px">
+        <span class="chip chip-blue">AI/ML</span>
+        <span class="chip chip-blue">Data Science</span>
+        <span class="chip chip-blue">Generative AI</span>
+        <span class="chip chip-yellow">IoT</span>
+        <span class="chip chip-green">Research</span>
+      </div>
+    </div>
+
+    <!-- FDP Schedule -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">📅 Session Schedule</div>
+        <span class="badge badge-green">Resource Person Sessions</span>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:12px">
+        <div style="background:var(--bg-secondary);border:1px solid var(--border-color);border-left:3px solid var(--accent-blue);border-radius:var(--radius-sm);padding:14px">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+            <span class="badge badge-blue">Day 1</span>
+            <span style="font-size:12px;font-weight:700;color:var(--text-primary)" data-session-1-date>22 September 2026</span>
+          </div>
+          <div style="font-size:13px;color:var(--accent-cyan);font-weight:700;margin-bottom:4px" data-session-1-time>05:00 PM – 08:00 PM</div>
+          <div style="font-size:12px;color:var(--text-secondary)" data-session-1-topic>Foundations of Artificial Intelligence and Distributed Learning</div>
+        </div>
+        <div style="background:var(--bg-secondary);border:1px solid var(--border-color);border-left:3px solid var(--accent-purple);border-radius:var(--radius-sm);padding:14px">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+            <span class="badge badge-purple">Day 2</span>
+            <span style="font-size:12px;font-weight:700;color:var(--text-primary)" data-session-2-date>23 September 2026</span>
+          </div>
+          <div style="font-size:13px;color:var(--accent-cyan);font-weight:700;margin-bottom:4px" data-session-2-time>05:00 PM – 08:00 PM</div>
+          <div style="font-size:12px;color:var(--text-secondary)" data-session-2-topic>Federated Learning Architectures and Privacy-Preserving AI</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Learning Journey -->
+  <div class="card" style="margin-bottom:24px">
+    <div class="card-header"><div class="card-title">🗺️ Learning Journey</div></div>
+    <div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center">
+      <span class="chip chip-blue">AI Foundations</span><span style="color:var(--text-muted)">→</span>
+      <span class="chip chip-blue">Distributed Learning</span><span style="color:var(--text-muted)">→</span>
+      <span class="chip chip-blue">Centralized vs FL</span><span style="color:var(--text-muted)">→</span>
+      <span class="chip chip-blue">FL Architecture</span><span style="color:var(--text-muted)">→</span>
+      <span class="chip chip-blue">FedAvg</span><span style="color:var(--text-muted)">→</span>
+      <span class="chip chip-blue">Non-IID Learning</span><span style="color:var(--text-muted)">→</span>
+      <span class="chip chip-yellow">Cross-Device / Cross-Silo</span><span style="color:var(--text-muted)">→</span>
+      <span class="chip chip-yellow">Privacy</span><span style="color:var(--text-muted)">→</span>
+      <span class="chip chip-yellow">Differential Privacy</span><span style="color:var(--text-muted)">→</span>
+      <span class="chip chip-yellow">Secure Aggregation</span><span style="color:var(--text-muted)">→</span>
+      <span class="chip chip-red">Threat Models</span><span style="color:var(--text-muted)">→</span>
+      <span class="chip chip-green">FL Lab</span><span style="color:var(--text-muted)">→</span>
+      <span class="chip chip-green">Research</span><span style="color:var(--text-muted)">→</span>
+      <span class="chip chip-green">Mini Project</span>
+    </div>
+  </div>
+
+  <!-- Disclaimer -->
+  <div class="alert alert-warning">
+    <span class="alert-icon">⚠️</span>
+    <span>All demonstrations are intended for <strong>educational and research-training purposes</strong>. Real-world deployment requires appropriate privacy, security, governance, compliance, and validation. All FL simulations in this portal are conceptual browser simulations unless otherwise indicated.</span>
+  </div>
+</div>
+
+<!-- ─────────────────────────────────────────────────────────────────────
+     DASHBOARD SECTION
+───────────────────────────────────────────────────────────────────── -->
+<div id="section-dashboard" style="display:none">
+  <div class="section-title">📊 FDP Dashboard</div>
+  <div class="section-subtitle" data-fdp-title>Federated Learning for Secure and Distributed AI Systems</div>
+
+  <div class="grid-2" style="gap:24px;margin-bottom:24px">
+    <!-- Session Timer -->
+    <div class="card timer-panel">
+      <div class="timer-label" id="timer-session-label">Loading session info...</div>
+      <div class="timer-display">
+        <span id="timer-hours">00</span>:<span id="timer-minutes">00</span>:<span id="timer-seconds">00</span>
+      </div>
+      <div class="timer-status" id="timer-status">--</div>
+      <div class="progress-label" style="margin-top:12px"><span>Session Progress</span><span id="timer-pct">0%</span></div>
+      <div class="progress-bar-container progress-lg"><div class="progress-bar" id="timer-progress-bar" style="width:0%"></div></div>
+      <div class="timer-controls">
+        <button class="btn btn-success btn-sm" id="timer-start">▶ Start</button>
+        <button class="btn btn-warning btn-sm" id="timer-pause">⏸ Pause</button>
+        <button class="btn btn-ghost btn-sm" id="timer-reset">🔄 Reset</button>
+      </div>
+    </div>
+
+    <!-- Quick Launch -->
+    <div class="card">
+      <div class="card-title" style="margin-bottom:16px">🚀 Quick Launch</div>
+      <div class="grid-2" style="gap:10px">
+        <button class="btn btn-primary btn-full" data-goto="day1">📅 Day 1 Content</button>
+        <button class="btn btn-secondary btn-full" data-goto="day2">📅 Day 2 Content</button>
+        <button class="btn btn-success btn-full" data-goto="fl-lab">⚙️ FL Simulator</button>
+        <button class="btn btn-ghost btn-full" data-goto="python-lab">🐍 Python Lab</button>
+        <button class="btn btn-ghost btn-full" data-goto="quiz">❓ Take Quiz</button>
+        <button class="btn btn-ghost btn-full" data-goto="experiments">🧪 Experiments</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Learning timeline -->
+  <div class="card" style="margin-bottom:24px">
+    <div class="card-header"><div class="card-title">🗺️ Complete Learning Path</div></div>
+    <div class="timeline">
+      <div class="timeline-item">
+        <div class="timeline-left"><div class="timeline-dot active">1</div><div class="timeline-line"></div></div>
+        <div class="timeline-content"><div class="timeline-title">AI Foundations</div><div class="timeline-desc">AI → ML → Deep Learning → Generative AI → Intelligent Systems</div></div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-left"><div class="timeline-dot">2</div><div class="timeline-line"></div></div>
+        <div class="timeline-content"><div class="timeline-title">Distributed vs Centralized Learning</div><div class="timeline-desc">Why distributed? Privacy, compliance, bandwidth challenges</div></div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-left"><div class="timeline-dot">3</div><div class="timeline-line"></div></div>
+        <div class="timeline-content"><div class="timeline-title">Federated Learning Architecture</div><div class="timeline-desc">Server-client model, FL rounds, FedAvg algorithm, formula & variables</div></div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-left"><div class="timeline-dot">4</div><div class="timeline-line"></div></div>
+        <div class="timeline-content"><div class="timeline-title">IID vs Non-IID Data</div><div class="timeline-desc">Data heterogeneity challenge, client drift, convergence effects</div></div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-left"><div class="timeline-dot">5</div><div class="timeline-line"></div></div>
+        <div class="timeline-content"><div class="timeline-title">Cross-Device & Cross-Silo FL</div><div class="timeline-desc">Mobile/IoT scale vs organizational collaboration</div></div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-left"><div class="timeline-dot">6</div><div class="timeline-line"></div></div>
+        <div class="timeline-content"><div class="timeline-title">Privacy-Preserving AI</div><div class="timeline-desc">Differential Privacy, Secure Aggregation, Homomorphic Encryption</div></div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-left"><div class="timeline-dot">7</div><div class="timeline-line"></div></div>
+        <div class="timeline-content"><div class="timeline-title">Security & Threat Models</div><div class="timeline-desc">Model poisoning, gradient leakage, Byzantine attacks, defenses</div></div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-left"><div class="timeline-dot">8</div></div>
+        <div class="timeline-content"><div class="timeline-title">Hands-on Labs, Research & Mini Projects</div><div class="timeline-desc">Python implementation, research directions, project ideas</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ─────────────────────────────────────────────────────────────────────
+     DAY 1 SECTION
+───────────────────────────────────────────────────────────────────── -->
+<div id="section-day1" style="display:none">
+  <div class="section-title">📅 Day 1</div>
+  <div class="section-subtitle" data-session-1-topic>Foundations of Artificial Intelligence and Distributed Learning</div>
+  <div style="margin-bottom:4px"><span class="badge badge-blue" data-session-1-date>22 September 2026</span> <span class="badge badge-green" data-session-1-time>05:00 PM – 08:00 PM</span></div>
+
+  <div class="speaker-note">🎓 <strong>Trainer Note:</strong> Start with a quick poll — "How many of you have heard of Federated Learning?" Use it to gauge the audience. Key message: FL = training without sharing data.</div>
+
+  <!-- Day 1 Tabs -->
+  <div class="tab-nav" style="margin-top:20px">
+    <button class="tab-btn active" data-tab="ai" data-tab-group="day1">🤖 AI Foundations</button>
+    <button class="tab-btn" data-tab="dist" data-tab-group="day1">🌐 Distributed Learning</button>
+    <button class="tab-btn" data-tab="compare" data-tab-group="day1">⚖️ Centralized vs FL</button>
+    <button class="tab-btn" data-tab="arch" data-tab-group="day1">🏗️ FL Architecture</button>
+    <button class="tab-btn" data-tab="sim" data-tab-group="day1">⚙️ FL Simulator</button>
+    <button class="tab-btn" data-tab="noniid" data-tab-group="day1">📊 Non-IID</button>
+    <button class="tab-btn" data-tab="usecases" data-tab-group="day1">🌍 Use Cases</button>
+  </div>
+
+  <!-- Tab: AI Foundations -->
+  <div class="tab-pane active" data-tab="ai" data-tab-group="day1">
+    <div class="grid-2" style="gap:24px">
+      <div class="card">
+        <div class="card-title" style="margin-bottom:16px">🤖 AI Hierarchy — Click to Explore</div>
+        <div class="ai-tree">
+          <div class="ai-node"><div class="ai-node-label" data-node="ai">🧠 Artificial Intelligence</div>
+            <div class="ai-node-children">
+              <div class="ai-node"><div class="ai-node-label" data-node="ml">📈 Machine Learning</div>
+                <div class="ai-node-children">
+                  <div class="ai-node"><div class="ai-node-label" data-node="supervised">✅ Supervised Learning</div></div>
+                  <div class="ai-node"><div class="ai-node-label" data-node="unsupervised">🔍 Unsupervised Learning</div></div>
+                  <div class="ai-node"><div class="ai-node-label" data-node="reinforcement">🎮 Reinforcement Learning</div></div>
+                </div>
+              </div>
+              <div class="ai-node"><div class="ai-node-label" data-node="dl">🧩 Deep Learning</div></div>
+              <div class="ai-node"><div class="ai-node-label" data-node="genai">✨ Generative AI</div></div>
+              <div class="ai-node"><div class="ai-node-label" data-node="intelligent">🤖 Intelligent Systems</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div class="ai-detail-panel" id="ai-detail-panel" style="display:none"></div>
+        <div class="card" id="ai-hint-card">
+          <div style="text-align:center;padding:32px;color:var(--text-muted)">
+            <div style="font-size:40px;margin-bottom:12px">👆</div>
+            <div style="font-size:14px">Click any node in the AI hierarchy to see its definition, examples, algorithms, and real-world applications.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="speaker-note">🎓 <strong>Trainer Note:</strong> Ask participants: "Where does Federated Learning fit in this hierarchy?" (Answer: It's a training paradigm within ML/DL, applicable across all learning types.) Suggested transition: "Now let's understand WHY we even need Federated Learning."</div>
+  </div>
+
+  <!-- Tab: Distributed Learning -->
+  <div class="tab-pane" data-tab="dist" data-tab-group="day1">
+    <div class="grid-2" style="gap:24px;margin-bottom:24px">
+      <div class="card">
+        <div class="card-title" style="margin-bottom:14px">❓ Why Distributed Learning?</div>
+        <div style="display:flex;flex-direction:column;gap:10px">
+          <div class="alert alert-error"><span class="alert-icon">🔒</span><span><strong>Privacy Regulations:</strong> GDPR, HIPAA, and data sovereignty laws prevent centralizing sensitive data (health records, financial data, student data).</span></div>
+          <div class="alert alert-warning"><span class="alert-icon">📡</span><span><strong>Bandwidth Costs:</strong> Sending raw data from millions of edge devices to a central server is prohibitively expensive.</span></div>
+          <div class="alert alert-info"><span class="alert-icon">⚡</span><span><strong>Edge Computing:</strong> Processing data locally on edge devices reduces latency and enables real-time intelligence.</span></div>
+          <div class="alert alert-success"><span class="alert-icon">🔐</span><span><strong>Data Ownership:</strong> Organizations want to keep their data and only share intelligence (model updates).</span></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title" style="margin-bottom:14px">🌐 Types of Distributed Learning</div>
+        <div style="display:flex;flex-direction:column;gap:12px">
+          <div style="padding:12px;background:var(--bg-secondary);border-radius:var(--radius-sm);border-left:3px solid var(--accent-blue)">
+            <div style="font-weight:700;margin-bottom:4px">Data Parallelism</div>
+            <div style="font-size:12px;color:var(--text-secondary)">Same model, split data across GPUs/servers. Data typically centralized. Used in large-scale ML training.</div>
+          </div>
+          <div style="padding:12px;background:var(--bg-secondary);border-radius:var(--radius-sm);border-left:3px solid var(--accent-yellow)">
+            <div style="font-weight:700;margin-bottom:4px">Model Parallelism</div>
+            <div style="font-size:12px;color:var(--text-secondary)">Different model layers on different devices. Used for very large models (LLMs). Data still centralized.</div>
+          </div>
+          <div style="padding:12px;background:var(--bg-secondary);border-radius:var(--radius-sm);border-left:3px solid var(--accent-green)">
+            <div style="font-weight:700;margin-bottom:4px;color:var(--accent-green)">✅ Federated Learning</div>
+            <div style="font-size:12px;color:var(--text-secondary)">Data stays on clients. Only model updates shared. Privacy-preserving by design. Enables compliance.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="speaker-note">🎓 <strong>Trainer Note:</strong> Key distinction: Data Parallelism/Model Parallelism still centralize data (just distribute computation). FL is the only approach where data NEVER leaves its source. Suggested question: "Can you think of a scenario in your institution where you CANNOT centralize data?"</div>
+  </div>
+
+  <!-- Tab: Centralized vs FL -->
+  <div class="tab-pane" data-tab="compare" data-tab-group="day1">
+    <div class="grid-2" style="gap:24px;margin-bottom:24px">
+      <div class="card">
+        <div class="card-header"><div class="card-title">🏢 Centralized Learning</div></div>
+        <div style="background:var(--bg-secondary);border-radius:var(--radius-sm);padding:16px;font-family:var(--font-mono);font-size:12px;color:var(--text-secondary);margin-bottom:14px;line-height:2">
+          Device 1 ──┐<br>
+          Device 2 ──┤<br>
+          Device 3 ──┼──▶ Central Server ──▶ Global Model<br>
+          Device 4 ──┤<br>
+          Device 5 ──┘<br>
+          <span style="color:var(--accent-red)">↑ Raw data uploaded to server</span>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:6px">
+          <div class="alert alert-error"><span class="alert-icon">❌</span>Raw data leaves devices — privacy risk</div>
+          <div class="alert alert-error"><span class="alert-icon">❌</span>Single point of failure</div>
+          <div class="alert alert-success"><span class="alert-icon">✅</span>Simpler to implement</div>
+          <div class="alert alert-success"><span class="alert-icon">✅</span>No communication overhead per round</div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header"><div class="card-title">🌐 Federated Learning</div></div>
+        <div style="background:var(--bg-secondary);border-radius:var(--radius-sm);padding:16px;font-family:var(--font-mono);font-size:12px;color:var(--text-secondary);margin-bottom:14px;line-height:2">
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Global Model<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;│<br>
+          &nbsp;&nbsp;&nbsp;┌───┴───┐<br>
+          &nbsp;&nbsp;▼&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;▼<br>
+          Client 1 &nbsp;Client 2<br>
+          Local ML &nbsp;Local ML<br>
+          &nbsp;&nbsp;│&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;│<br>
+          &nbsp;&nbsp;└──┬──────┘<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;▼ <span style="color:var(--accent-green)">Secure Aggregation</span><br>
+          &nbsp;&nbsp;Updated Global Model
+        </div>
+        <div style="display:flex;flex-direction:column;gap:6px">
+          <div class="alert alert-success"><span class="alert-icon">✅</span>Data stays on device — privacy preserved</div>
+          <div class="alert alert-success"><span class="alert-icon">✅</span>Compliance-friendly (GDPR, HIPAA)</div>
+          <div class="alert alert-warning"><span class="alert-icon">⚠️</span>More complex coordination</div>
+          <div class="alert alert-warning"><span class="alert-icon">⚠️</span>Non-IID data challenges convergence</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Comparison Table -->
+    <div class="card">
+      <div class="card-title" style="margin-bottom:16px">📊 Head-to-Head Comparison</div>
+      <div style="overflow-x:auto">
+        <table class="comparison-table">
+          <thead><tr><th>Dimension</th><th>Centralized Learning</th><th>Federated Learning</th></tr></thead>
+          <tbody>
+            <tr><td class="col-feature">Data Location</td><td class="col-bad">Moves to central server</td><td class="col-good">Stays on client devices</td></tr>
+            <tr><td class="col-feature">Privacy</td><td class="col-bad">Low — server sees all data</td><td class="col-good">High — only gradients shared</td></tr>
+            <tr><td class="col-feature">GDPR/HIPAA Compliance</td><td class="col-warn">Requires special data agreements</td><td class="col-good">Naturally compliant</td></tr>
+            <tr><td class="col-feature">Communication Cost</td><td class="col-good">Low (one-time upload)</td><td class="col-warn">Higher (model updates per round)</td></tr>
+            <tr><td class="col-feature">Scalability</td><td class="col-warn">Limited by server capacity</td><td class="col-good">Scales to millions of devices</td></tr>
+            <tr><td class="col-feature">Single Point of Failure</td><td class="col-bad">Yes — server failure = data loss</td><td class="col-good">No — distributed by design</td></tr>
+            <tr><td class="col-feature">Data Freshness</td><td class="col-good">Static snapshot</td><td class="col-good">Continuously updated local data</td></tr>
+            <tr><td class="col-feature">Model Accuracy</td><td class="col-good">Highest (full data access)</td><td class="col-warn">Slightly lower (no raw data)</td></tr>
+            <tr><td class="col-feature">Best Use Case</td><td>Controlled environments, research</td><td>Healthcare, finance, mobile, IoT</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="speaker-note">🎓 <strong>Trainer Note:</strong> Activity idea: Show a scenario (e.g., "5 hospitals want to build a cancer detection model"). Ask: "Should they use centralized or FL?" Participants should discuss why. Common misconception: "FL always gives worse accuracy." Clarify: With enough rounds and good aggregation, FL can approach centralized performance.</div>
+  </div>
+
+  <!-- Tab: FL Architecture -->
+  <div class="tab-pane" data-tab="arch" data-tab-group="day1">
+    <div class="grid-2" style="gap:24px;margin-bottom:24px">
+      <div class="card">
+        <div class="card-title" style="margin-bottom:16px">🏗️ FL Training Round — Step by Step</div>
+        <div class="timeline">
+          <div class="timeline-item"><div class="timeline-left"><div class="timeline-dot done">1</div><div class="timeline-line"></div></div><div class="timeline-content"><div class="timeline-title">Initialize Global Model</div><div class="timeline-desc">Server creates initial model w⁰ with random weights</div></div></div>
+          <div class="timeline-item"><div class="timeline-left"><div class="timeline-dot done">2</div><div class="timeline-line"></div></div><div class="timeline-content"><div class="timeline-title">Select Clients</div><div class="timeline-desc">Server samples a subset of available clients (fraction C)</div></div></div>
+          <div class="timeline-item"><div class="timeline-left"><div class="timeline-dot active">3</div><div class="timeline-line"></div></div><div class="timeline-content"><div class="timeline-title">Broadcast Global Model</div><div class="timeline-desc">Server sends current global model w(t) to selected clients</div></div></div>
+          <div class="timeline-item"><div class="timeline-left"><div class="timeline-dot">4</div><div class="timeline-line"></div></div><div class="timeline-content"><div class="timeline-title">Local Training</div><div class="timeline-desc">Each client trains on local private data for E epochs, producing wₖ(t+1)</div></div></div>
+          <div class="timeline-item"><div class="timeline-left"><div class="timeline-dot">5</div><div class="timeline-line"></div></div><div class="timeline-content"><div class="timeline-title">Upload Model Updates</div><div class="timeline-desc">Clients send Δwₖ = wₖ(t+1) − w(t) to server. Data never leaves!</div></div></div>
+          <div class="timeline-item"><div class="timeline-left"><div class="timeline-dot">6</div><div class="timeline-line"></div></div><div class="timeline-content"><div class="timeline-title">Aggregation (FedAvg)</div><div class="timeline-desc">Server computes weighted average: w(t+1) = Σ(nₖ/n)·wₖ(t+1)</div></div></div>
+          <div class="timeline-item"><div class="timeline-left"><div class="timeline-dot">7</div></div><div class="timeline-content"><div class="timeline-title">Repeat for T Rounds</div><div class="timeline-desc">Iterate until convergence or maximum rounds reached</div></div></div>
+        </div>
+      </div>
+      <div>
+        <div class="card" style="margin-bottom:16px">
+          <div class="card-title" style="margin-bottom:16px">📐 FedAvg Formula</div>
+          <div class="formula-box">
+            <div class="formula">w⁽ᵗ⁺¹⁾ = Σₖ (nₖ / n) · wₖ⁽ᵗ⁺¹⁾</div>
+            <div class="formula-terms">
+              <div class="formula-term"><div class="formula-term-var">w⁽ᵗ⁺¹⁾</div><div class="formula-term-label">New global model</div></div>
+              <div class="formula-term"><div class="formula-term-var">nₖ</div><div class="formula-term-label">Client k data size</div></div>
+              <div class="formula-term"><div class="formula-term-var">n</div><div class="formula-term-label">Total data across all clients</div></div>
+              <div class="formula-term"><div class="formula-term-var">wₖ⁽ᵗ⁺¹⁾</div><div class="formula-term-label">Client k local model after training</div></div>
+            </div>
+          </div>
+          <div class="alert alert-info" style="margin-top:12px"><span class="alert-icon">💡</span><span><strong>Intuition:</strong> Clients with larger datasets contribute proportionally more to the global model update. A hospital with 10,000 patient records has 10× more influence than one with 1,000 records.</span></div>
+        </div>
+        <div class="card">
+          <div class="card-title" style="margin-bottom:12px">🧩 Key FL Components</div>
+          <div style="display:flex;flex-direction:column;gap:8px">
+            <div style="display:flex;gap:10px;align-items:flex-start"><span style="color:var(--accent-blue);font-size:18px">🖥️</span><div><strong>FL Server:</strong> <span style="color:var(--text-secondary)">Coordinates training, aggregates updates, broadcasts global model. Does NOT see raw data.</span></div></div>
+            <div style="display:flex;gap:10px;align-items:flex-start"><span style="color:var(--accent-green);font-size:18px">📱</span><div><strong>FL Clients:</strong> <span style="color:var(--text-secondary)">Train locally on private data, send model updates. Could be phones, hospitals, banks, IoT devices.</span></div></div>
+            <div style="display:flex;gap:10px;align-items:flex-start"><span style="color:var(--accent-yellow);font-size:18px">⚖️</span><div><strong>Aggregation Strategy:</strong> <span style="color:var(--text-secondary)">FedAvg (default), FedMedian (robust), FedProx (Non-IID stable), FedYogi (adaptive).</span></div></div>
+            <div style="display:flex;gap:10px;align-items:flex-start"><span style="color:var(--accent-purple);font-size:18px">🔒</span><div><strong>Privacy Layer:</strong> <span style="color:var(--text-secondary)">Optional DP noise, Secure Aggregation, or HE to further protect model updates.</span></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="speaker-note">🎓 <strong>Trainer Note:</strong> Draw this on a whiteboard or use the animated FL Simulator (next tab). Key question for participants: "What is the difference between sending 'data' vs sending 'model updates'?" Model updates are vectors of numbers (gradients) — they don't contain records like names, ages, diagnoses.</div>
+  </div>
+
+  <!-- Tab: FL Simulator -->
+  <div class="tab-pane" data-tab="sim" data-tab-group="day1">
+    <div class="alert alert-sim" style="margin-bottom:16px"><span class="alert-icon">⚠️</span><span><strong>CONCEPTUAL SIMULATION</strong> — This is an educational browser simulation demonstrating FL behavior mathematically. It is not performing real distributed training.</span></div>
+    <div class="grid-2" style="gap:24px">
+      <!-- Controls -->
+      <div class="card">
+        <div class="card-title" style="margin-bottom:16px">⚙️ Simulation Configuration</div>
+        <div style="display:flex;flex-direction:column;gap:14px">
+          <div class="slider-container"><div class="slider-top"><span class="slider-label">Clients</span><span class="slider-value" id="fl-sim-clients-val">5</span></div><input type="range" class="interactive-slider" id="fl-sim-clients" min="2" max="15" value="5"></div>
+          <div class="slider-container"><div class="slider-top"><span class="slider-label">Communication Rounds</span><span class="slider-value" id="fl-sim-rounds-val">10</span></div><input type="range" class="interactive-slider" id="fl-sim-rounds" min="5" max="40" value="10"></div>
+          <div class="slider-container"><div class="slider-top"><span class="slider-label">Local Epochs</span><span class="slider-value" id="fl-sim-epochs-val">3</span></div><input type="range" class="interactive-slider" id="fl-sim-epochs" min="1" max="10" value="3"></div>
+          <div class="slider-container"><div class="slider-top"><span class="slider-label">Learning Rate</span><span class="slider-value" id="fl-sim-lr-val">0.01</span></div><input type="range" class="interactive-slider" id="fl-sim-lr" min="1" max="100" value="10"></div>
+          <div style="display:flex;gap:12px">
+            <div style="flex:1"><label class="slider-label">Distribution</label><select id="fl-sim-distribution" style="width:100%;background:var(--bg-secondary);border:1px solid var(--border-color);border-radius:var(--radius-sm);padding:8px;color:var(--text-primary);margin-top:4px"><option value="iid">IID (Balanced)</option><option value="noniid">Non-IID (Skewed)</option></select></div>
+            <div style="flex:1"><label class="slider-label">Aggregation</label><select id="fl-sim-aggregation" style="width:100%;background:var(--bg-secondary);border:1px solid var(--border-color);border-radius:var(--radius-sm);padding:8px;color:var(--text-primary);margin-top:4px"><option value="fedavg">FedAvg</option><option value="fedmedian">FedMedian</option></select></div>
+          </div>
+          <div style="display:flex;gap:10px;margin-top:4px">
+            <button class="btn btn-success" id="fl-sim-start">▶ Start Training</button>
+            <button class="btn btn-danger" id="fl-sim-stop" disabled>⏹ Stop</button>
+            <button class="btn btn-ghost" id="fl-sim-reset">🔄 Reset</button>
+          </div>
+        </div>
+      </div>
+      <!-- Live Stats -->
+      <div>
+        <div class="stat-row" style="margin-bottom:16px">
+          <div class="stat-item"><div class="stat-value" id="fl-sim-round-display" style="color:var(--accent-blue)">0</div><div class="stat-label">Round</div></div>
+          <div class="stat-item"><div class="stat-value" id="fl-sim-global-acc" style="color:var(--accent-green)">--</div><div class="stat-label">Global Accuracy</div></div>
+          <div class="stat-item"><div class="stat-value" id="fl-sim-global-loss" style="color:var(--accent-red)">--</div><div class="stat-label">Global Loss</div></div>
+        </div>
+        <div class="card-compact" style="background:var(--bg-secondary);border:1px solid var(--border-color);border-radius:var(--radius-sm);margin-bottom:12px">
+          <div style="font-size:11px;font-weight:700;color:var(--text-muted);margin-bottom:8px">STATUS</div>
+          <div id="fl-sim-status" style="font-size:13px;color:var(--accent-cyan)">Ready to simulate...</div>
+        </div>
+        <div style="height:220px;position:relative"><canvas id="fl-sim-accuracy-chart"></canvas></div>
+      </div>
+    </div>
+    <!-- Client Panels -->
+    <div style="margin-top:16px"><div style="font-size:13px;font-weight:700;margin-bottom:10px;color:var(--text-primary)">📱 Client Training Status</div><div id="fl-sim-client-panels" class="grid-4" style="gap:10px"></div></div>
+    <!-- Log -->
+    <div style="margin-top:16px"><div style="font-size:11px;font-weight:700;color:var(--text-muted);margin-bottom:6px">📋 TRAINING LOG</div><div class="fl-log" id="fl-sim-log"><span class="fl-log-entry fl-log-info">Configure parameters above and click Start Training...</span></div></div>
+  </div>
+
+  <!-- Tab: Non-IID -->
+  <div class="tab-pane" data-tab="noniid" data-tab-group="day1">
+    <div class="grid-2" style="gap:24px;margin-bottom:20px">
+      <div class="card">
+        <div class="card-title" style="margin-bottom:12px">📊 IID vs Non-IID Data</div>
+        <p style="font-size:13px;color:var(--text-secondary);margin-bottom:14px">In real-world FL, clients rarely have balanced data. Each device has data from its own users — creating heterogeneous (Non-IID) distributions.</p>
+        <div style="display:flex;gap:12px;margin-bottom:14px">
+          <button class="btn btn-primary" id="show-iid-btn" onclick="showDataDist('iid')">Show IID</button>
+          <button class="btn btn-secondary" id="show-noniid-btn" onclick="showDataDist('noniid')">Show Non-IID</button>
+        </div>
+        <canvas id="noniid-distribution-chart" style="max-height:220px"></canvas>
+      </div>
+      <div class="card">
+        <div class="card-title" style="margin-bottom:12px">📈 Effect on Convergence</div>
+        <canvas id="noniid-convergence-chart" style="max-height:220px"></canvas>
+        <div class="alert alert-warning" style="margin-top:12px"><span class="alert-icon">⚠️</span><span><strong>Client Drift:</strong> Non-IID data causes local models to diverge from the global optimum, slowing convergence. FedProx adds a proximal term to counteract this.</span></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title" style="margin-bottom:12px">🔍 Example: Non-IID Client Distribution</div>
+      <div class="grid-4" style="gap:10px">
+        <div class="client-panel"><div class="client-panel-header"><div class="client-dot done"></div><span class="client-label">Client 1</span></div><div class="client-stat"><span>Class A</span><span class="client-stat-val">78%</span></div><div class="client-stat"><span>Class B</span><span class="client-stat-val">15%</span></div><div class="client-stat"><span>Class C</span><span class="client-stat-val">7%</span></div></div>
+        <div class="client-panel"><div class="client-panel-header"><div class="client-dot done"></div><span class="client-label">Client 2</span></div><div class="client-stat"><span>Class A</span><span class="client-stat-val">5%</span></div><div class="client-stat"><span>Class B</span><span class="client-stat-val">82%</span></div><div class="client-stat"><span>Class C</span><span class="client-stat-val">13%</span></div></div>
+        <div class="client-panel"><div class="client-panel-header"><div class="client-dot done"></div><span class="client-label">Client 3</span></div><div class="client-stat"><span>Class A</span><span class="client-stat-val">10%</span></div><div class="client-stat"><span>Class B</span><span class="client-stat-val">8%</span></div><div class="client-stat"><span>Class C</span><span class="client-stat-val">82%</span></div></div>
+        <div class="client-panel"><div class="client-panel-header"><div class="client-dot done"></div><span class="client-label">Client 4</span></div><div class="client-stat"><span>Class A</span><span class="client-stat-val">33%</span></div><div class="client-stat"><span>Class B</span><span class="client-stat-val">34%</span></div><div class="client-stat"><span>Class C</span><span class="client-stat-val">33%</span></div></div>
+      </div>
+    </div>
+    <div class="speaker-note">🎓 <strong>Trainer Note:</strong> Ask participants to think about their own institution's data: "If 3 hospitals use FL, and Hospital A has only diabetes patients, Hospital B has only cardiac patients — is this IID or Non-IID?" Discussion: Solutions include FedProx, Personalized FL, data augmentation, clustering clients by similarity.</div>
+  </div>
+
+  <!-- Tab: Use Cases -->
+  <div class="tab-pane" data-tab="usecases" data-tab-group="day1">
+    <div class="grid-2" style="gap:16px">
+      <!-- Healthcare -->
+      <div class="use-case-card">
+        <div class="use-case-card-header"><div class="use-case-icon" style="background:rgba(239,68,68,0.12)">🏥</div><div><div style="font-weight:700">Healthcare</div><div style="font-size:12px;color:var(--text-secondary)">Federated medical AI</div></div></div>
+        <div class="use-case-card-body">
+          <div class="use-case-row"><div class="use-case-row-label">Problem</div><div class="use-case-row-text">Hospitals have limited data individually. Pooling patient records violates HIPAA/GDPR and patient privacy.</div></div>
+          <div class="use-case-row"><div class="use-case-row-label">FL Approach</div><div class="use-case-row-text">Each hospital trains local models on its patient data. Only model weights are shared. The global model benefits from diverse patient populations without sharing records.</div></div>
+          <div class="use-case-row"><div class="use-case-row-label">Real Examples</div><div class="use-case-row-text">COVID-19 detection (Intel + hospitals), Tumor detection, Drug interaction prediction</div></div>
+          <div class="use-case-row"><div class="use-case-row-label">Benefits</div><div class="use-case-row-text">HIPAA compliant, larger effective dataset, diverse patient demographics, no re-identification risk</div></div>
+        </div>
+      </div>
+      <!-- Banking -->
+      <div class="use-case-card">
+        <div class="use-case-card-header"><div class="use-case-icon" style="background:rgba(245,158,11,0.12)">🏦</div><div><div style="font-weight:700">Banking & Finance</div><div style="font-size:12px;color:var(--text-secondary)">Federated fraud detection</div></div></div>
+        <div class="use-case-card-body">
+          <div class="use-case-row"><div class="use-case-row-label">Problem</div><div class="use-case-row-text">Fraud patterns span multiple banks but transaction data is highly sensitive and competitively confidential.</div></div>
+          <div class="use-case-row"><div class="use-case-row-label">FL Approach</div><div class="use-case-row-text">Banks collaborate on fraud detection models without sharing customer transaction records. Cross-institution fraud patterns are captured.</div></div>
+          <div class="use-case-row"><div class="use-case-row-label">Benefits</div><div class="use-case-row-text">Better fraud detection, regulatory compliance, customer privacy preserved, competitive data stays internal</div></div>
+        </div>
+      </div>
+      <!-- Smart Phones -->
+      <div class="use-case-card">
+        <div class="use-case-card-header"><div class="use-case-icon" style="background:rgba(59,130,246,0.12)">📱</div><div><div style="font-weight:700">Smart Phones</div><div style="font-size:12px;color:var(--text-secondary)">On-device personalization</div></div></div>
+        <div class="use-case-card-body">
+          <div class="use-case-row"><div class="use-case-row-label">Problem</div><div class="use-case-row-text">Keyboard prediction requires learning user typing patterns, which are highly personal and private.</div></div>
+          <div class="use-case-row"><div class="use-case-row-label">FL Approach</div><div class="use-case-row-text">Google's Gboard trains next-word prediction on millions of devices. Typing data never leaves the phone. Aggregated model updates improve the shared model.</div></div>
+          <div class="use-case-row"><div class="use-case-row-label">Real Example</div><div class="use-case-row-text">Google Gboard (2017) — the first large-scale production FL deployment</div></div>
+        </div>
+      </div>
+      <!-- IoT -->
+      <div class="use-case-card">
+        <div class="use-case-card-header"><div class="use-case-icon" style="background:rgba(16,185,129,0.12)">🌆</div><div><div style="font-weight:700">Smart Cities & IoT</div><div style="font-size:12px;color:var(--text-secondary)">Distributed edge intelligence</div></div></div>
+        <div class="use-case-card-body">
+          <div class="use-case-row"><div class="use-case-row-label">Problem</div><div class="use-case-row-text">IoT sensors generate massive streams of environmental, traffic, and energy data that is costly to centralize.</div></div>
+          <div class="use-case-row"><div class="use-case-row-label">FL Approach</div><div class="use-case-row-text">Traffic sensors, air quality monitors, and smart meters train local anomaly detection models. Edge FL enables real-time response without cloud dependency.</div></div>
+          <div class="use-case-row"><div class="use-case-row-label">Benefits</div><div class="use-case-row-text">Low latency, bandwidth efficient, location data stays local, scales to millions of devices</div></div>
+        </div>
+      </div>
+      <!-- Autonomous -->
+      <div class="use-case-card">
+        <div class="use-case-card-header"><div class="use-case-icon" style="background:rgba(139,92,246,0.12)">🚗</div><div><div style="font-weight:700">Autonomous Systems</div><div style="font-size:12px;color:var(--text-secondary)">Collaborative driving intelligence</div></div></div>
+        <div class="use-case-card-body">
+          <div class="use-case-row"><div class="use-case-row-label">Problem</div><div class="use-case-row-text">Autonomous vehicles need diverse driving data across weather, road types, and geographies. No single manufacturer can collect all scenarios.</div></div>
+          <div class="use-case-row"><div class="use-case-row-label">FL Approach</div><div class="use-case-row-text">Vehicle fleets from different manufacturers share driving model updates (not raw video). Global model becomes safer with diverse real-world scenarios.</div></div>
+        </div>
+      </div>
+      <!-- Education -->
+      <div class="use-case-card">
+        <div class="use-case-card-header"><div class="use-case-icon" style="background:rgba(6,182,212,0.12)">🎓</div><div><div style="font-weight:700">Education</div><div style="font-size:12px;color:var(--text-secondary)">Cross-institution learning analytics</div></div></div>
+        <div class="use-case-card-body">
+          <div class="use-case-row"><div class="use-case-row-label">Problem</div><div class="use-case-row-text">Student performance data is sensitive. Universities cannot share student records across institutions for research.</div></div>
+          <div class="use-case-row"><div class="use-case-row-label">FL Approach</div><div class="use-case-row-text">Universities collaboratively train student outcome prediction models using FL. Each institution keeps its student data locally while contributing to a shared intelligence model.</div></div>
+          <div class="use-case-row"><div class="use-case-row-label">Benefits</div><div class="use-case-row-text">FERPA compliant, larger training population, diverse student demographics, actionable early intervention insights</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ─────────────────────────────────────────────────────────────────────
+     DAY 2 SECTION
+───────────────────────────────────────────────────────────────────── -->
+<div id="section-day2" style="display:none">
+  <div class="section-title">📅 Day 2</div>
+  <div class="section-subtitle" data-session-2-topic>Federated Learning Architectures and Privacy-Preserving AI</div>
+  <div style="margin-bottom:4px"><span class="badge badge-purple" data-session-2-date>23 September 2026</span> <span class="badge badge-green" data-session-2-time>05:00 PM – 08:00 PM</span></div>
+
+  <div class="tab-nav" style="margin-top:20px">
+    <button class="tab-btn active" data-tab="device" data-tab-group="day2">📱 Cross-Device</button>
+    <button class="tab-btn" data-tab="silo" data-tab-group="day2">🏢 Cross-Silo</button>
+    <button class="tab-btn" data-tab="hybrid" data-tab-group="day2">🔀 Hybrid FL</button>
+    <button class="tab-btn" data-tab="dp" data-tab-group="day2">🔒 Diff. Privacy</button>
+    <button class="tab-btn" data-tab="secagg" data-tab-group="day2">🛡️ Secure Agg.</button>
+    <button class="tab-btn" data-tab="he" data-tab-group="day2">🔐 Homomorphic Enc.</button>
+    <button class="tab-btn" data-tab="threats" data-tab-group="day2">⚠️ Threat Models</button>
+    <button class="tab-btn" data-tab="comm" data-tab-group="day2">📡 Comm. Efficiency</button>
+  </div>
+
+  <!-- Cross-Device FL -->
+  <div class="tab-pane active" data-tab="device" data-tab-group="day2">
+    <div class="grid-2" style="gap:24px">
+      <div class="card">
+        <div class="card-title" style="margin-bottom:14px">📱 Cross-Device Federated Learning</div>
+        <div style="background:var(--bg-secondary);border-radius:var(--radius-sm);padding:16px;font-family:var(--font-mono);font-size:12px;color:var(--text-secondary);margin-bottom:14px;line-height:2;text-align:center">
+          FL Server<br>↕ gRPC ↕<br>
+          📱 📱 📱 📱 📱 📱 📱 📱 📱 📱<br>
+          <span style="color:var(--text-muted);font-size:10px">(Millions of devices)</span>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <div class="alert alert-info"><span class="alert-icon">📊</span><span><strong>Scale:</strong> Millions to billions of clients (mobile phones, wearables, IoT sensors)</span></div>
+          <div class="alert alert-warning"><span class="alert-icon">⚡</span><span><strong>Resources:</strong> Limited compute, battery, bandwidth. Training must be lightweight.</span></div>
+          <div class="alert alert-error"><span class="alert-icon">❌</span><span><strong>Availability:</strong> Devices may be offline, unreliable, or drop out mid-round (stragglers).</span></div>
+          <div class="alert alert-success"><span class="alert-icon">🔒</span><span><strong>Privacy:</strong> Strong privacy requirements. Often combined with DP and SecAgg.</span></div>
+        </div>
+        <div class="alert alert-info" style="margin-top:12px"><span class="alert-icon">🌟</span><span><strong>Real Example:</strong> Google Gboard — next-word prediction on Android phones. Training happens only when phone is charging, idle, and on WiFi.</span></div>
+      </div>
+      <div class="card">
+        <div class="card-title" style="margin-bottom:14px">🔑 Key Challenges</div>
+        <div style="display:flex;flex-direction:column;gap:10px">
+          <div style="padding:12px;background:var(--bg-secondary);border-radius:var(--radius-sm)"><div style="font-weight:700;margin-bottom:4px">🐌 Stragglers</div><div style="font-size:12px;color:var(--text-secondary)">Slow/dropped devices cause round delays. Solution: asynchronous FL, ignore slow devices after timeout.</div></div>
+          <div style="padding:12px;background:var(--bg-secondary);border-radius:var(--radius-sm)"><div style="font-weight:700;margin-bottom:4px">📊 Statistical Heterogeneity</div><div style="font-size:12px;color:var(--text-secondary)">Each user has unique data patterns (Non-IID). Solution: personalized FL, FedProx, clustered FL.</div></div>
+          <div style="padding:12px;background:var(--bg-secondary);border-radius:var(--radius-sm)"><div style="font-weight:700;margin-bottom:4px">🔋 System Heterogeneity</div><div style="font-size:12px;color:var(--text-secondary)">Devices have different CPU, RAM, battery. Solution: adaptive local training steps, model compression.</div></div>
+          <div style="padding:12px;background:var(--bg-secondary);border-radius:var(--radius-sm)"><div style="font-weight:700;margin-bottom:4px">📡 Communication Bottleneck</div><div style="font-size:12px;color:var(--text-secondary)">Uploading model updates is bandwidth-intensive. Solution: gradient compression, quantization, partial participation.</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="speaker-note">🎓 <strong>Trainer Note:</strong> Key insight: in cross-device FL, it's common to have only 0.1% of devices participate per round (e.g., 1 million active phones → 1000 participate per round). This random sampling provides privacy amplification! Question: "Why do we train only when the phone is charging and on WiFi?"</div>
+  </div>
+
+  <!-- Cross-Silo FL -->
+  <div class="tab-pane" data-tab="silo" data-tab-group="day2">
+    <div class="grid-2" style="gap:24px">
+      <div class="card">
+        <div class="card-title" style="margin-bottom:14px">🏢 Cross-Silo Federated Learning</div>
+        <div style="background:var(--bg-secondary);border-radius:var(--radius-sm);padding:20px;font-family:var(--font-mono);font-size:13px;color:var(--text-secondary);margin-bottom:14px;text-align:center;line-height:2.5">
+          Central Coordinator<br>
+          ╱&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;│&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;╲<br>
+          🏥 Hospital &nbsp;&nbsp;🏦 Bank &nbsp;&nbsp;🎓 Univ.<br>
+          Local ML &nbsp;&nbsp;&nbsp;Local ML &nbsp;Local ML
+        </div>
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <div class="alert alert-info"><span class="alert-icon">🏢</span><span><strong>Scale:</strong> Tens to hundreds of organizations (hospitals, banks, companies)</span></div>
+          <div class="alert alert-success"><span class="alert-icon">💾</span><span><strong>Data:</strong> Large local datasets, reliable infrastructure, always available</span></div>
+          <div class="alert alert-success"><span class="alert-icon">🤝</span><span><strong>Trust:</strong> Formal data sharing agreements, institutional accountability</span></div>
+          <div class="alert alert-warning"><span class="alert-icon">⚖️</span><span><strong>Governance:</strong> Requires data use agreements, regulatory approval, audit trails</span></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title" style="margin-bottom:14px">⚖️ Cross-Device vs Cross-Silo</div>
+        <div style="overflow-x:auto">
+          <table class="comparison-table">
+            <thead><tr><th>Property</th><th>Cross-Device</th><th>Cross-Silo</th></tr></thead>
+            <tbody>
+              <tr><td class="col-feature">Num. Participants</td><td>Millions to billions</td><td>Tens to hundreds</td></tr>
+              <tr><td class="col-feature">Data per Client</td><td class="col-warn">Small (user's phone)</td><td class="col-good">Large (org. dataset)</td></tr>
+              <tr><td class="col-feature">Availability</td><td class="col-bad">Unreliable (offline)</td><td class="col-good">Always online</td></tr>
+              <tr><td class="col-feature">Compute</td><td class="col-bad">Very limited</td><td class="col-good">Powerful servers</td></tr>
+              <tr><td class="col-feature">Communication</td><td class="col-bad">Costly, limited BW</td><td class="col-good">High bandwidth</td></tr>
+              <tr><td class="col-feature">Trust Level</td><td class="col-warn">Anonymous devices</td><td class="col-good">Known organizations</td></tr>
+              <tr><td class="col-feature">Examples</td><td>Gboard, iOS features</td><td>Healthcare consortia, banking fraud networks</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Hybrid FL -->
+  <div class="tab-pane" data-tab="hybrid" data-tab-group="day2">
+    <div class="card" style="margin-bottom:24px">
+      <div class="card-title" style="margin-bottom:16px">🔀 Hierarchical / Hybrid Federated Learning</div>
+      <div class="grid-2" style="gap:24px">
+        <div>
+          <div style="background:var(--bg-secondary);border-radius:var(--radius-sm);padding:20px;font-family:var(--font-mono);font-size:13px;color:var(--text-secondary);text-align:center;line-height:2.5">
+            ☁️ Cloud / Global Coordinator<br>│<br>🏢 Organization (Edge Server)<br>╱&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;│&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;╲<br>📱 Client 📱 Client 📱 Client
+          </div>
+          <div class="alert alert-info" style="margin-top:14px"><span class="alert-icon">💡</span><span><strong>Idea:</strong> Aggregate within organizations first (edge aggregation), then aggregate organization-level models at cloud. Reduces cloud communication cost.</span></div>
+        </div>
+        <div>
+          <div class="card-compact" style="background:var(--bg-secondary);border:1px solid var(--border-color);border-radius:var(--radius-sm);margin-bottom:12px">
+            <div style="font-weight:700;margin-bottom:8px">Use Case: National Healthcare Network</div>
+            <div class="timeline">
+              <div class="timeline-item"><div class="timeline-left"><div class="timeline-dot done" style="width:24px;height:24px;font-size:11px">L1</div><div class="timeline-line"></div></div><div class="timeline-content"><div class="timeline-title">Hospital Devices</div><div class="timeline-desc">Bedside monitors, imaging machines train locally</div></div></div>
+              <div class="timeline-item"><div class="timeline-left"><div class="timeline-dot active" style="width:24px;height:24px;font-size:11px">L2</div><div class="timeline-line"></div></div><div class="timeline-content"><div class="timeline-title">Hospital Aggregation</div><div class="timeline-desc">Each hospital aggregates device models (edge FL server)</div></div></div>
+              <div class="timeline-item"><div class="timeline-left"><div class="timeline-dot" style="width:24px;height:24px;font-size:11px">L3</div></div><div class="timeline-content"><div class="timeline-title">National Aggregation</div><div class="timeline-desc">Ministry of Health aggregates hospital models → national AI</div></div></div>
+            </div>
+          </div>
+          <div class="alert alert-success"><span class="alert-icon">✅</span><span><strong>Benefits:</strong> Reduces global communication by 10-100×, enables region-specific models, natural organizational hierarchy</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Differential Privacy -->
+  <div class="tab-pane" data-tab="dp" data-tab-group="day2">
+    <div class="alert alert-sim" style="margin-bottom:16px"><span class="alert-icon">📊</span><span><strong>EDUCATIONAL SIMULATION</strong> — Privacy values shown are illustrative. Real DP requires formal privacy accounting (Rényi DP, moments accountant).</span></div>
+    <div class="grid-2" style="gap:24px;margin-bottom:24px">
+      <!-- DP Slider -->
+      <div class="card">
+        <div class="card-title" style="margin-bottom:16px">🎛️ Interactive DP Demonstration</div>
+        <div class="slider-container" style="margin-bottom:20px">
+          <div class="slider-top"><span class="slider-label">Privacy Budget (ε)</span><span class="slider-value" id="dp-epsilon-display">1.0</span></div>
+          <input type="range" class="interactive-slider" id="dp-noise-slider" min="1" max="100" value="50" step="1">
+          <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--text-muted);margin-top:4px"><span>← More private (ε=0.1)</span><span>Less private (ε=5.0) →</span></div>
+        </div>
+        <div class="grid-2" style="gap:12px;margin-bottom:16px">
+          <div>
+            <div style="font-size:11px;font-weight:700;color:var(--text-muted);margin-bottom:6px">PRIVACY SCORE</div>
+            <div class="progress-bar-container"><div class="progress-bar progress-bar-green" id="dp-privacy-score" style="width:50%"></div></div>
+          </div>
+          <div>
+            <div style="font-size:11px;font-weight:700;color:var(--text-muted);margin-bottom:6px">UTILITY SCORE</div>
+            <div class="progress-bar-container"><div class="progress-bar" id="dp-utility-score" style="width:75%"></div></div>
+          </div>
+        </div>
+        <div class="stat-row">
+          <div class="stat-item"><div class="stat-value" id="dp-accuracy-display" style="font-size:18px;color:var(--accent-green)">~85%</div><div class="stat-label">Est. Accuracy</div></div>
+          <div class="stat-item"><div class="stat-value" id="dp-noise-sigma" style="font-size:18px;color:var(--accent-yellow)">0.24</div><div class="stat-label">Noise σ</div></div>
+        </div>
+        <div class="formula-box" style="margin-top:12px">
+          <div class="formula" style="font-size:14px">σ = √(2·ln(1.25/δ)) · Δf / ε</div>
+        </div>
+      </div>
+      <!-- Charts -->
+      <div>
+        <div style="height:160px;margin-bottom:12px"><canvas id="dp-original-chart"></canvas></div>
+        <div style="height:160px"><canvas id="dp-noisy-chart"></canvas></div>
+      </div>
+    </div>
+    <!-- DP Concepts -->
+    <div class="grid-2" style="gap:16px">
+      <div class="card">
+        <div class="card-title" style="margin-bottom:12px">📚 Key DP Concepts</div>
+        <div style="display:flex;flex-direction:column;gap:10px">
+          <div style="padding:12px;background:var(--bg-secondary);border-radius:var(--radius-sm)"><div style="font-weight:700;color:var(--accent-blue);margin-bottom:4px">ε (Epsilon) — Privacy Budget</div><div style="font-size:12px;color:var(--text-secondary)">Controls privacy-utility tradeoff. ε < 1 = strong privacy. ε > 10 = weak. Common practice: ε ∈ [1, 10].</div></div>
+          <div style="padding:12px;background:var(--bg-secondary);border-radius:var(--radius-sm)"><div style="font-weight:700;color:var(--accent-yellow);margin-bottom:4px">δ (Delta) — Failure Probability</div><div style="font-size:12px;color:var(--text-secondary)">Probability that privacy guarantee fails. Typically set to 1/n² where n = dataset size. Often 10⁻⁵.</div></div>
+          <div style="padding:12px;background:var(--bg-secondary);border-radius:var(--radius-sm)"><div style="font-weight:700;color:var(--accent-green);margin-bottom:4px">Δf — Sensitivity</div><div style="font-size:12px;color:var(--text-secondary)">Max change in function output when one data point changes. Determines noise scale needed for privacy.</div></div>
+          <div style="padding:12px;background:var(--bg-secondary);border-radius:var(--radius-sm)"><div style="font-weight:700;color:var(--accent-cyan);margin-bottom:4px">Local DP vs Global DP</div><div style="font-size:12px;color:var(--text-secondary)">Local DP: client adds noise before sending (no server trust needed). Global DP: server adds noise to aggregate (requires trusted server).</div></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title" style="margin-bottom:12px">⚖️ Privacy-Utility Tradeoff</div>
+        <canvas id="dp-tradeoff-chart" style="max-height:200px"></canvas>
+        <div class="alert alert-warning" style="margin-top:12px"><span class="alert-icon">⚠️</span><span>There is no free lunch: stronger privacy always costs some accuracy. Find the right balance for your application's requirements.</span></div>
+      </div>
+    </div>
+    <div class="speaker-note">🎓 <strong>Trainer Note:</strong> Common misconception: "DP guarantees complete privacy." Clarify: DP provides a mathematical bound on information leakage — it does NOT guarantee zero leakage. Key analogy: DP is like adding fog to a photo. The more fog (noise), the harder it is to identify individuals, but the harder it is to see useful details too.</div>
+  </div>
+
+  <!-- Secure Aggregation -->
+  <div class="tab-pane" data-tab="secagg" data-tab-group="day2">
+    <div class="grid-2" style="gap:24px">
+      <div class="card">
+        <div class="card-title" style="margin-bottom:16px">🛡️ Secure Aggregation</div>
+        <p style="font-size:13px;color:var(--text-secondary);margin-bottom:16px">Secure Aggregation (SecAgg) allows the FL server to compute the sum of client updates without seeing any individual update. It's like asking 3 people to add their secret numbers without revealing them individually.</p>
+        <div style="background:var(--bg-secondary);border-radius:var(--radius-sm);padding:16px;font-family:var(--font-mono);font-size:12px;text-align:center;line-height:2.2">
+          <span style="color:var(--accent-blue)">Client 1 → [🔐 Masked Update A]</span><br>
+          <span style="color:var(--accent-green)">Client 2 → [🔐 Masked Update B]</span><br>
+          <span style="color:var(--accent-yellow)">Client 3 → [🔐 Masked Update C]</span><br>
+          ↓<br>
+          <span style="color:var(--text-muted)">Server computes A+B+C</span><br>
+          <span style="color:var(--accent-green)">✅ Masks cancel → True Sum revealed</span><br>
+          <span style="color:var(--accent-red)">❌ Individual A, B, C remain secret</span>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title" style="margin-bottom:14px">📋 How SecAgg Works — Step by Step</div>
+        <div class="timeline">
+          <div class="timeline-item"><div class="timeline-left"><div class="timeline-dot done">1</div><div class="timeline-line"></div></div><div class="timeline-content"><div class="timeline-title">Key Agreement</div><div class="timeline-desc">Clients establish shared secret keys with each other using Diffie-Hellman key exchange</div></div></div>
+          <div class="timeline-item"><div class="timeline-left"><div class="timeline-dot done">2</div><div class="timeline-line"></div></div><div class="timeline-content"><div class="timeline-title">Mask Generation</div><div class="timeline-desc">Each client pair generates correlated random masks: r(i,j) = PRF(key(i,j), round)</div></div></div>
+          <div class="timeline-item"><div class="timeline-left"><div class="timeline-dot active">3</div><div class="timeline-line"></div></div><div class="timeline-content"><div class="timeline-title">Mask Application</div><div class="timeline-desc">Client i sends: update_i + Σⱼ r(i,j). Masks are added and subtracted in pairs.</div></div></div>
+          <div class="timeline-item"><div class="timeline-left"><div class="timeline-dot">4</div><div class="timeline-line"></div></div><div class="timeline-content"><div class="timeline-title">Server Aggregation</div><div class="timeline-desc">Server sums masked updates. Correlated masks cancel: Σᵢ masked_i = Σᵢ update_i</div></div></div>
+          <div class="timeline-item"><div class="timeline-left"><div class="timeline-dot">5</div></div><div class="timeline-content"><div class="timeline-title">Dropout Handling</div><div class="timeline-desc">If a client drops out, secret sharing (Shamir's) allows recovery of their mask contribution</div></div></div>
+        </div>
+        <div class="alert alert-info" style="margin-top:12px"><span class="alert-icon">📖</span><span><strong>Reference:</strong> Bonawitz et al., "Practical Secure Aggregation for Privacy-Preserving Machine Learning" (CCS 2017) — foundational SecAgg protocol.</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Homomorphic Encryption -->
+  <div class="tab-pane" data-tab="he" data-tab-group="day2">
+    <div class="alert alert-warning" style="margin-bottom:16px"><span class="alert-icon">🎓</span><span><strong>TOY DEMONSTRATION</strong> — Real HE uses complex lattice-based cryptography (BFV, CKKS, BGV schemes). This demo illustrates the CONCEPT using simple arithmetic.</span></div>
+    <div class="grid-2" style="gap:24px">
+      <div class="card">
+        <div class="card-title" style="margin-bottom:16px">🔐 Interactive HE Toy Demo</div>
+        <div style="display:flex;gap:12px;margin-bottom:16px;align-items:flex-end">
+          <div><label class="slider-label">Value A</label><input type="number" id="he-val1" value="7" min="1" max="99" style="width:80px;background:var(--bg-secondary);border:1px solid var(--border-color);border-radius:var(--radius-sm);padding:8px;color:var(--text-primary);font-size:16px;font-weight:700;text-align:center"></div>
+          <div><label class="slider-label">Value B</label><input type="number" id="he-val2" value="3" min="1" max="99" style="width:80px;background:var(--bg-secondary);border:1px solid var(--border-color);border-radius:var(--radius-sm);padding:8px;color:var(--text-primary);font-size:16px;font-weight:700;text-align:center"></div>
+          <div><label class="slider-label">Operation</label><select id="he-operation" style="background:var(--bg-secondary);border:1px solid var(--border-color);border-radius:var(--radius-sm);padding:8px;color:var(--text-primary)"><option value="add">Add (+)</option><option value="mul">Multiply (×)</option><option value="sub">Subtract (-)</option></select></div>
+          <button class="btn btn-primary" id="he-compute-btn">🔐 Compute!</button>
+        </div>
+        <div id="he-steps"><div style="padding:32px;text-align:center;color:var(--text-muted)">Enter values and click Compute to see the HE demonstration</div></div>
+      </div>
+      <div class="card">
+        <div class="card-title" style="margin-bottom:14px">📚 Types of Homomorphic Encryption</div>
+        <div style="display:flex;flex-direction:column;gap:10px">
+          <div style="padding:14px;background:var(--bg-secondary);border-radius:var(--radius-sm);border-left:3px solid var(--accent-green)">
+            <div style="font-weight:700;color:var(--accent-green)">PHE — Partially Homomorphic</div>
+            <div style="font-size:12px;color:var(--text-secondary);margin-top:4px">Supports ONE operation (addition OR multiplication) on ciphertexts. Fast, practical. Example: Paillier (addition), ElGamal (multiplication).</div>
+          </div>
+          <div style="padding:14px;background:var(--bg-secondary);border-radius:var(--radius-sm);border-left:3px solid var(--accent-yellow)">
+            <div style="font-weight:700;color:var(--accent-yellow)">SHE — Somewhat Homomorphic</div>
+            <div style="font-size:12px;color:var(--text-secondary);margin-top:4px">Supports limited number of both operations. Noise accumulates with operations. Useful for shallow neural networks.</div>
+          </div>
+          <div style="padding:14px;background:var(--bg-secondary);border-radius:var(--radius-sm);border-left:3px solid var(--accent-blue)">
+            <div style="font-weight:700;color:var(--accent-blue)">FHE — Fully Homomorphic</div>
+            <div style="font-size:12px;color:var(--text-secondary);margin-top:4px">Supports arbitrary computations on ciphertexts. Very powerful but computationally expensive (1000-100,000× slower). Based on lattice cryptography (CKKS, BFV, BGV).</div>
+          </div>
+        </div>
+        <div class="alert alert-warning" style="margin-top:12px"><span class="alert-icon">⚠️</span><span><strong>Current Limitation:</strong> FHE is too slow for practical deep learning FL. Active research area: making HE fast enough for production FL.</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Threat Models -->
+  <div class="tab-pane" data-tab="threats" data-tab-group="day2">
+    <div class="card" style="margin-bottom:16px">
+      <div class="card-title" style="margin-bottom:4px">⚠️ FL Security Threat Models</div>
+      <div style="font-size:13px;color:var(--text-secondary)">Click any threat card to see details, attack vector, impact, and defense mechanisms.</div>
+    </div>
+    <div class="grid-2" style="gap:12px">
+      <div class="threat-card"><div class="threat-card-header"><div class="threat-severity threat-severity-medium"></div><span style="font-weight:700">Honest-but-Curious Server</span><span style="margin-left:auto" class="badge badge-yellow">MEDIUM</span></div><div class="threat-card-body"><div class="threat-row"><div class="threat-row-label">Threat</div>Server follows protocol but tries to infer private info from updates</div><div class="threat-row"><div class="threat-row-label">Attack</div>Analyze gradient updates to infer client data distribution or membership</div><div class="threat-row"><div class="threat-row-label">Defense</div>Differential Privacy, Secure Aggregation, gradient clipping</div></div></div>
+      <div class="threat-card"><div class="threat-card-header"><div class="threat-severity threat-severity-high"></div><span style="font-weight:700">Model Poisoning Attack</span><span style="margin-left:auto" class="badge badge-red">HIGH</span></div><div class="threat-card-body"><div class="threat-row"><div class="threat-row-label">Threat</div>Compromised client sends malicious updates to corrupt the global model</div><div class="threat-row"><div class="threat-row-label">Attack</div>Backdoor attacks — model performs normally overall but fails on specific inputs (e.g., a stop sign with a sticker is classified as speed limit)</div><div class="threat-row"><div class="threat-row-label">Defense</div>Byzantine-robust aggregation (FedMedian, Krum, FLTrust), anomaly detection on updates</div></div></div>
+      <div class="threat-card"><div class="threat-card-header"><div class="threat-severity threat-severity-high"></div><span style="font-weight:700">Gradient Leakage / Deep Leakage</span><span style="margin-left:auto" class="badge badge-red">HIGH</span></div><div class="threat-card-body"><div class="threat-row"><div class="threat-row-label">Threat</div>Private training data reconstructed from shared gradient updates</div><div class="threat-row"><div class="threat-row-label">Attack</div>Zhu et al. (2019) showed that gradients can be inverted to recover training images with high fidelity</div><div class="threat-row"><div class="threat-row-label">Defense</div>Differential Privacy, gradient compression, secure aggregation, gradient obfuscation</div></div></div>
+      <div class="threat-card"><div class="threat-card-header"><div class="threat-severity threat-severity-medium"></div><span style="font-weight:700">Membership Inference Attack</span><span style="margin-left:auto" class="badge badge-yellow">MEDIUM</span></div><div class="threat-card-body"><div class="threat-row"><div class="threat-row-label">Threat</div>Attacker determines whether a specific record was used in training</div><div class="threat-row"><div class="threat-row-label">Attack</div>Query model confidence on suspected training records — members show higher confidence (overfitting)</div><div class="threat-row"><div class="threat-row-label">Defense</div>Differential Privacy, regularization, output perturbation</div></div></div>
+      <div class="threat-card"><div class="threat-card-header"><div class="threat-severity threat-severity-high"></div><span style="font-weight:700">Data Poisoning Attack</span><span style="margin-left:auto" class="badge badge-red">HIGH</span></div><div class="threat-card-body"><div class="threat-row"><div class="threat-row-label">Threat</div>Attacker contaminates client's local training data with adversarial samples</div><div class="threat-row"><div class="threat-row-label">Attack</div>Label flipping (change "fraud" → "normal"), feature poisoning (add trigger patterns to training images)</div><div class="threat-row"><div class="threat-row-label">Defense</div>Data validation, anomaly detection in local training, certified defenses</div></div></div>
+      <div class="threat-card"><div class="threat-card-header"><div class="threat-severity threat-severity-medium"></div><span style="font-weight:700">Free-Rider Problem</span><span style="margin-left:auto" class="badge badge-yellow">MEDIUM</span></div><div class="threat-card-body"><div class="threat-row"><div class="threat-row-label">Threat</div>Participant benefits from global model without contributing genuine updates</div><div class="threat-row"><div class="threat-row-label">Attack</div>Send random noise, zero updates, or stale updates while downloading improved model each round</div><div class="threat-row"><div class="threat-row-label">Defense</div>Contribution evaluation, reputation systems, incentive mechanisms, federated distillation</div></div></div>
+      <div class="threat-card"><div class="threat-card-header"><div class="threat-severity threat-severity-high"></div><span style="font-weight:700">Sybil Attack</span><span style="margin-left:auto" class="badge badge-red">HIGH</span></div><div class="threat-card-body"><div class="threat-row"><div class="threat-row-label">Threat</div>Attacker creates many fake clients to gain disproportionate influence on aggregation</div><div class="threat-row"><div class="threat-row-label">Attack</div>50+ fake clients with coordinated malicious updates overwhelm honest client updates in FedAvg</div><div class="threat-row"><div class="threat-row-label">Defense</div>Client authentication, trust management, Byzantine-robust aggregation, rate limiting</div></div></div>
+      <div class="threat-card"><div class="threat-card-header"><div class="threat-severity threat-severity-low"></div><span style="font-weight:700">Malicious Client</span><span style="margin-left:auto" class="badge badge-green">DEFENDED</span></div><div class="threat-card-body"><div class="threat-row"><div class="threat-row-label">Threat</div>Fully adversarial client that actively tries to corrupt training or extract information</div><div class="threat-row"><div class="threat-row-label">Defense</div>Byzantine-robust aggregation (Krum, FedMedian), anomaly detection, secure aggregation, multi-party computation</div></div></div>
+    </div>
+  </div>
+
+  <!-- Communication Efficiency -->
+  <div class="tab-pane" data-tab="comm" data-tab-group="day2">
+    <div class="alert alert-info" style="margin-bottom:16px"><span class="alert-icon">📡</span><span><strong>EDUCATIONAL ESTIMATE</strong> — Communication costs are approximate. Actual network costs depend on infrastructure, protocols, and compression implementation.</span></div>
+    <div class="grid-2" style="gap:24px;margin-bottom:24px">
+      <div class="card">
+        <div class="card-title" style="margin-bottom:16px">📊 Communication Cost Calculator</div>
+        <div style="display:flex;flex-direction:column;gap:14px">
+          <div class="slider-container"><div class="slider-top"><span class="slider-label">Number of Clients</span><span class="slider-value" id="comm-clients-val">100</span></div><input type="range" class="interactive-slider" id="comm-clients" min="10" max="1000" value="100" step="10"></div>
+          <div><label class="slider-label">Model Size</label><select id="comm-model-size" style="width:100%;background:var(--bg-secondary);border:1px solid var(--border-color);border-radius:var(--radius-sm);padding:8px;color:var(--text-primary);margin-top:4px"><option value="1">Small — 1 MB (Logistic Regression)</option><option value="10" selected>Medium — 10 MB (Small CNN)</option><option value="100">Large — 100 MB (ResNet-50)</option><option value="1000">Very Large — 1 GB (LLM layer)</option></select></div>
+          <div class="slider-container"><div class="slider-top"><span class="slider-label">Communication Rounds</span><span class="slider-value" id="comm-rounds-val">50</span></div><input type="range" class="interactive-slider" id="comm-rounds" min="10" max="200" value="50" step="10"></div>
+          <div class="slider-container"><div class="slider-top"><span class="slider-label">Compression Ratio</span><span class="slider-value" id="comm-compression-val">10×</span></div><input type="range" class="interactive-slider" id="comm-compression" min="1" max="50" value="10"></div>
+          <button class="btn btn-primary btn-full" id="comm-calculate">📊 Calculate Communication Cost</button>
+        </div>
+      </div>
+      <div><div id="comm-savings-display" style="margin-bottom:16px"><div style="color:var(--text-muted);text-align:center;padding:32px">Click "Calculate" to see cost analysis</div></div></div>
+    </div>
+    <div class="card">
+      <div class="card-title" style="margin-bottom:14px">🔧 Compression Techniques</div>
+      <div class="grid-2" style="gap:12px">
+        <div style="padding:14px;background:var(--bg-secondary);border-radius:var(--radius-sm)"><div style="font-weight:700;color:var(--accent-blue);margin-bottom:6px">Top-K Sparsification</div><div style="font-size:12px;color:var(--text-secondary)">Keep only the top K% of gradient values by magnitude. Zero out the rest. Typical K=1-10%. Achieves 10-100× compression with minimal accuracy loss.</div></div>
+        <div style="padding:14px;background:var(--bg-secondary);border-radius:var(--radius-sm)"><div style="font-weight:700;color:var(--accent-green);margin-bottom:6px">Quantization</div><div style="font-size:12px;color:var(--text-secondary)">Reduce numerical precision: float32 → float16 → int8 → int4. 4-bit quantization = 8× compression. Modern LLMs use 4-bit quantization successfully.</div></div>
+        <div style="padding:14px;background:var(--bg-secondary);border-radius:var(--radius-sm)"><div style="font-weight:700;color:var(--accent-yellow);margin-bottom:6px">Model Pruning</div><div style="font-size:12px;color:var(--text-secondary)">Remove weights with near-zero values. PruneFL dynamically determines which weights to share per round. 50-90% sparsity achievable.</div></div>
+        <div style="padding:14px;background:var(--bg-secondary);border-radius:var(--radius-sm)"><div style="font-weight:700;color:var(--accent-cyan);margin-bottom:6px">Fewer Rounds (Local SGD)</div><div style="font-size:12px;color:var(--text-secondary)">More local training steps per round means fewer communication rounds overall. FedAvg's key contribution: multiple local epochs between rounds.</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ─────────────────────────────────────────────────────────────────────
+     FL LAB SECTION
+───────────────────────────────────────────────────────────────────── -->
+<div id="section-fl-lab" style="display:none">
+  <div class="section-title">🔬 FL Training Laboratory</div>
+  <div class="section-subtitle">Hands-on Federated Learning Experiment</div>
+  <div class="alert alert-sim" style="margin-bottom:20px"><span class="alert-icon">⚠️</span><span><strong>CONCEPTUAL SIMULATION</strong> — Browser simulation for educational purposes. For real FL training, use the Python files in the Python Lab section.</span></div>
+
+  <div class="grid-2" style="gap:24px;margin-bottom:24px">
+    <!-- Procedure Steps -->
+    <div class="card">
+      <div class="card-title" style="margin-bottom:16px">📋 FL Experiment Procedure</div>
+      <div class="timeline">
+        <div class="timeline-item"><div class="timeline-left"><div class="timeline-dot done">1</div><div class="timeline-line"></div></div><div class="timeline-content"><div class="timeline-title">Load Dataset</div><div class="timeline-desc">Synthetic classification dataset: 1500 samples, 15 features, 3 classes</div></div></div>
+        <div class="timeline-item"><div class="timeline-left"><div class="timeline-dot done">2</div><div class="timeline-line"></div></div><div class="timeline-content"><div class="timeline-title">Distribute Among Clients</div><div class="timeline-desc">Split data into N client partitions (IID or Non-IID)</div></div></div>
+        <div class="timeline-item"><div class="timeline-left"><div class="timeline-dot active">3</div><div class="timeline-line"></div></div><div class="timeline-content"><div class="timeline-title">Initialize Global Model</div><div class="timeline-desc">Server creates initial model w⁰ with random weights</div></div></div>
+        <div class="timeline-item"><div class="timeline-left"><div class="timeline-dot">4</div><div class="timeline-line"></div></div><div class="timeline-content"><div class="timeline-title">Distribute to Clients</div><div class="timeline-desc">Server broadcasts w(t) to selected clients</div></div></div>
+        <div class="timeline-item"><div class="timeline-left"><div class="timeline-dot">5</div><div class="timeline-line"></div></div><div class="timeline-content"><div class="timeline-title">Local Training</div><div class="timeline-desc">Each client runs E epochs on local data → wₖ(t+1)</div></div></div>
+        <div class="timeline-item"><div class="timeline-left"><div class="timeline-dot">6</div><div class="timeline-line"></div></div><div class="timeline-content"><div class="timeline-title">Collect Updates</div><div class="timeline-desc">Server receives model updates (not data!) from clients</div></div></div>
+        <div class="timeline-item"><div class="timeline-left"><div class="timeline-dot">7</div><div class="timeline-line"></div></div><div class="timeline-content"><div class="timeline-title">FedAvg Aggregation</div><div class="timeline-desc">w(t+1) = Σ (nₖ/n) · wₖ(t+1)</div></div></div>
+        <div class="timeline-item"><div class="timeline-left"><div class="timeline-dot">8</div><div class="timeline-line"></div></div><div class="timeline-content"><div class="timeline-title">Evaluate Global Model</div><div class="timeline-desc">Test accuracy and loss on held-out test set</div></div></div>
+        <div class="timeline-item"><div class="timeline-left"><div class="timeline-dot">9</div></div><div class="timeline-content"><div class="timeline-title">Repeat for T Rounds</div><div class="timeline-desc">Until convergence or maximum rounds reached</div></div></div>
+      </div>
+    </div>
+
+    <!-- Same simulator controls reused -->
+    <div class="card">
+      <div class="card-title" style="margin-bottom:16px">⚙️ Lab Configuration</div>
+      <div style="display:flex;flex-direction:column;gap:12px">
+        <div class="slider-container"><div class="slider-top"><span class="slider-label">Clients</span><span class="slider-value" id="lab-clients-val">5</span></div><input type="range" class="interactive-slider" id="lab-clients" min="2" max="12" value="5"></div>
+        <div class="slider-container"><div class="slider-top"><span class="slider-label">Rounds</span><span class="slider-value" id="lab-rounds-val">15</span></div><input type="range" class="interactive-slider" id="lab-rounds" min="5" max="50" value="15"></div>
+        <div class="slider-container"><div class="slider-top"><span class="slider-label">Local Epochs</span><span class="slider-value" id="lab-epochs-val">5</span></div><input type="range" class="interactive-slider" id="lab-epochs" min="1" max="10" value="5"></div>
+        <div><label class="slider-label">Data Distribution</label><select id="lab-distribution" style="width:100%;background:var(--bg-secondary);border:1px solid var(--border-color);border-radius:var(--radius-sm);padding:8px;color:var(--text-primary);margin-top:4px"><option value="iid">IID (Balanced)</option><option value="noniid">Non-IID (Skewed)</option></select></div>
+        <button class="btn btn-success btn-full" onclick="startLabSimulation()">▶ Start Lab Experiment</button>
+        <button class="btn btn-ghost btn-full" onclick="resetLabSimulation()">🔄 Reset Experiment</button>
+      </div>
+      <div style="margin-top:16px">
+        <div class="stat-row">
+          <div class="stat-item"><div class="stat-value" id="lab-round" style="color:var(--accent-blue)">0</div><div class="stat-label">Round</div></div>
+          <div class="stat-item"><div class="stat-value" id="lab-acc" style="color:var(--accent-green)">--</div><div class="stat-label">Accuracy</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title" style="margin-bottom:14px">📈 Training Results</div>
+    <div style="height:250px"><canvas id="lab-accuracy-chart"></canvas></div>
+  </div>
+
+  <div class="card" style="margin-top:16px">
+    <div class="card-title" style="margin-bottom:12px">🔍 Observation Guide</div>
+    <div class="grid-2" style="gap:16px">
+      <div>
+        <div style="font-weight:700;color:var(--accent-blue);margin-bottom:8px">What to observe:</div>
+        <ul style="color:var(--text-secondary);font-size:13px;line-height:1.8;padding-left:18px">
+          <li>How accuracy increases with each round</li>
+          <li>Compare IID vs Non-IID convergence speed</li>
+          <li>Effect of more local epochs per round</li>
+          <li>Diminishing returns after sufficient rounds</li>
+        </ul>
+      </div>
+      <div>
+        <div style="font-weight:700;color:var(--accent-yellow);margin-bottom:8px">Discussion questions:</div>
+        <ul style="color:var(--text-secondary);font-size:13px;line-height:1.8;padding-left:18px">
+          <li>Why does accuracy fluctuate between rounds?</li>
+          <li>What happens if one client has 10× more data?</li>
+          <li>How would adding DP noise change these curves?</li>
+          <li>At what round does further training give diminishing returns?</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ─────────────────────────────────────────────────────────────────────
+     PYTHON LAB SECTION
+───────────────────────────────────────────────────────────────────── -->
+<div id="section-python-lab" style="display:none">
+  <div class="section-title">🐍 Python Laboratory</div>
+  <div class="section-subtitle">Federated Learning code — view, copy, and download for Google Colab</div>
+
+  <div class="alert alert-success" style="margin-bottom:20px"><span class="alert-icon">✅</span><span>All Python code uses <strong>numpy, scikit-learn, and matplotlib</strong> (available in Google Colab by default). No GPU required. Run directly in Colab or locally.</span></div>
+
+  <div class="grid-2" style="gap:24px">
+    <div class="card" style="flex:1">
+      <div class="card-header">
+        <div><label class="slider-label">Select Python File</label><select id="python-file-select" style="width:100%;background:var(--bg-secondary);border:1px solid var(--border-color);border-radius:var(--radius-sm);padding:8px;color:var(--text-primary);margin-top:4px">
+          <option value="centralized_baseline">01 — Centralized Learning Baseline</option>
+          <option value="fedavg_simulation">02 — FedAvg Simulation from Scratch</option>
+          <option value="iid_noniid_comparison">03 — IID vs Non-IID Data</option>
+          <option value="differential_privacy">04 — Differential Privacy Demo</option>
+          <option value="secure_aggregation_demo">05 — Secure Aggregation Toy Demo</option>
+          <option value="communication_compression">06 — Communication-Efficient FL</option>
+          <option value="flower_intro">07 — Flower (flwr) Framework Intro</option>
+          <option value="privacy_utility_tradeoff">08 — Privacy-Utility Tradeoff</option>
+        </select></div>
+        <div style="display:flex;gap:8px;margin-top:8px">
+          <button class="btn btn-ghost btn-sm" id="python-copy-btn">📋 Copy Code</button>
+          <button class="btn btn-success btn-sm" id="python-download-btn">⬇️ Download .py</button>
+        </div>
+      </div>
+      <div id="python-file-title" style="font-size:14px;font-weight:700;color:var(--accent-blue);margin-bottom:10px">FedAvg Simulation from Scratch</div>
+      <div id="python-code-viewer" style="font-size:12px;max-height:500px;overflow-y:auto"></div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:16px">
+      <div class="card">
+        <div class="card-title" style="margin-bottom:12px">📋 Step-by-Step Guide</div>
+        <div id="python-step-nav" style="display:flex;flex-direction:column;gap:6px;margin-bottom:12px"></div>
+        <div id="python-step-display" style="background:var(--bg-secondary);border-radius:var(--radius-sm);min-height:80px"></div>
+      </div>
+      <div class="card">
+        <div class="card-title" style="margin-bottom:12px">☁️ Run in Google Colab</div>
+        <ol style="font-size:13px;color:var(--text-secondary);line-height:1.8;padding-left:18px">
+          <li>Download the .py file using the button above</li>
+          <li>Open <a href="https://colab.research.google.com" target="_blank" style="color:var(--accent-blue)">colab.research.google.com</a></li>
+          <li>File → Upload notebook or upload .py file</li>
+          <li>All required packages (numpy, scikit-learn, matplotlib) are pre-installed</li>
+          <li>Click Runtime → Run All</li>
+        </ol>
+        <div class="alert alert-info" style="margin-top:10px"><span class="alert-icon">💡</span><span>No installation needed! Google Colab provides free Python environment with all scientific computing packages.</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ─────────────────────────────────────────────────────────────────────
+     EXPERIMENTS SECTION
+───────────────────────────────────────────────────────────────────── -->
+<div id="section-experiments" style="display:none">
+  <div class="section-title">🧪 Experiments</div>
+  <div class="section-subtitle">8 structured hands-on experiments — click to expand</div>
+
+  <div style="display:flex;flex-direction:column;gap:12px">
+    <!-- Exp 1 -->
+    <div class="experiment-card">
+      <div class="experiment-card-header">
+        <div class="experiment-number">1</div>
+        <div><div style="font-weight:700;font-size:15px">Centralized vs Federated Learning</div><div style="font-size:12px;color:var(--text-secondary)">Compare accuracy, privacy, and communication costs</div></div>
+        <span style="margin-left:auto" class="badge badge-blue">Simulation</span>
+      </div>
+      <div class="experiment-card-body">
+        <div class="experiment-section-title">🎯 Objective</div>
+        <p style="font-size:13px;color:var(--text-secondary)">Compare centralized ML and FL on the same classification task. Observe accuracy differences and understand the privacy-accuracy tradeoff.</p>
+        <div class="experiment-section-title">📋 Procedure</div>
+        <ol style="font-size:13px;color:var(--text-secondary);padding-left:18px;line-height:1.8"><li>Generate a synthetic dataset (200 samples, 3 classes)</li><li>Train centralized model on full dataset → record accuracy</li><li>Split same dataset among 5 FL clients</li><li>Run FL for 10 rounds → record global accuracy per round</li><li>Compare: centralized accuracy vs FL final accuracy</li></ol>
+        <div class="experiment-section-title">💡 Expected Observation</div>
+        <p style="font-size:13px;color:var(--text-secondary)">FL accuracy approaches but may not equal centralized accuracy. The gap depends on data distribution (IID vs Non-IID). Communication cost is higher for FL but privacy is preserved.</p>
+        <div class="experiment-section-title">❓ Discussion Questions</div>
+        <ul style="font-size:13px;color:var(--text-secondary);padding-left:18px;line-height:1.8"><li>When is the accuracy gap acceptable? What is the privacy benefit worth?</li><li>How many FL rounds are needed to match 80% of centralized accuracy?</li><li>In which real-world scenarios would you choose FL over centralized?</li></ul>
+        <div style="margin-top:14px"><button class="btn btn-primary btn-sm" data-goto="fl-lab">Launch FL Simulator</button> <button class="btn btn-secondary btn-sm" data-goto="python-lab">View Python Code</button></div>
+      </div>
+    </div>
+    <!-- Exp 2 -->
+    <div class="experiment-card">
+      <div class="experiment-card-header">
+        <div class="experiment-number">2</div>
+        <div><div style="font-weight:700;font-size:15px">FedAvg Deep Dive</div><div style="font-size:12px;color:var(--text-secondary)">Understand weighted averaging with different client data sizes</div></div>
+        <span style="margin-left:auto" class="badge badge-green">Conceptual</span>
+      </div>
+      <div class="experiment-card-body">
+        <div class="experiment-section-title">🎯 Objective</div>
+        <p style="font-size:13px;color:var(--text-secondary)">Manually compute FedAvg for 3 clients and verify the formula w(t+1) = Σ(nₖ/n)·wₖ(t+1). Understand how data size influences aggregation.</p>
+        <div class="formula-box" style="margin:12px 0"><div class="formula">Client 1: n₁=100, w₁=0.75 | Client 2: n₂=200, w₂=0.60 | Client 3: n₃=300, w₃=0.80</div><div style="color:var(--accent-green);margin-top:8px;font-family:var(--font-mono)">FedAvg = (100×0.75 + 200×0.60 + 300×0.80) / 600 = 0.725</div></div>
+        <div class="experiment-section-title">❓ Discussion</div>
+        <ul style="font-size:13px;color:var(--text-secondary);padding-left:18px;line-height:1.8"><li>What if client 3 had 1000 samples? How would the global model change?</li><li>Is FedAvg fair to clients with smaller datasets?</li><li>What aggregation would you use for adversarial robustness?</li></ul>
+      </div>
+    </div>
+    <!-- Exp 3 -->
+    <div class="experiment-card">
+      <div class="experiment-card-header">
+        <div class="experiment-number">3</div>
+        <div><div style="font-weight:700;font-size:15px">IID vs Non-IID Data Heterogeneity</div><div style="font-size:12px;color:var(--text-secondary)">Impact of data distribution on FL convergence</div></div>
+        <span style="margin-left:auto" class="badge badge-blue">Simulation</span>
+      </div>
+      <div class="experiment-card-body">
+        <div class="experiment-section-title">🎯 Objective</div>
+        <p style="font-size:13px;color:var(--text-secondary)">Run FL with IID and Non-IID splits on the same dataset. Compare convergence speed, final accuracy, and client variance.</p>
+        <div class="experiment-section-title">📋 Procedure</div>
+        <ol style="font-size:13px;color:var(--text-secondary);padding-left:18px;line-height:1.8"><li>Use the FL Simulator — set Distribution to IID, run 20 rounds, record accuracy curve</li><li>Reset, set Distribution to Non-IID, run 20 rounds, record accuracy curve</li><li>Compare the two curves</li></ol>
+        <div class="experiment-section-title">💡 Expected Observation</div>
+        <p style="font-size:13px;color:var(--text-secondary)">Non-IID converges slower, may oscillate more, and achieve lower final accuracy. This is the "client drift" phenomenon.</p>
+        <div style="margin-top:14px"><button class="btn btn-primary btn-sm" data-goto="fl-lab">Launch FL Simulator</button></div>
+      </div>
+    </div>
+    <!-- Exp 4-8 abbreviated -->
+    <div class="experiment-card">
+      <div class="experiment-card-header"><div class="experiment-number">4</div><div><div style="font-weight:700;font-size:15px">Cross-Device vs Cross-Silo Configuration</div><div style="font-size:12px;color:var(--text-secondary)">Compare characteristics and design choices</div></div><span style="margin-left:auto" class="badge badge-purple">Design</span></div>
+      <div class="experiment-card-body"><div class="experiment-section-title">🎯 Objective</div><p style="font-size:13px;color:var(--text-secondary)">Given real-world scenarios, decide whether cross-device or cross-silo FL is appropriate and justify your design choices.</p><div class="experiment-section-title">📋 Scenarios</div><ul style="font-size:13px;color:var(--text-secondary);padding-left:18px;line-height:1.8"><li>Scenario A: 5 large hospitals collaborating on cancer detection → Which setting?</li><li>Scenario B: 50 million smartphone users improving voice recognition → Which setting?</li><li>Scenario C: 20 banks detecting cross-border fraud → Which setting?</li><li>Scenario D: 10,000 IoT temperature sensors predicting equipment failure → Which setting?</li></ul></div>
+    </div>
+    <div class="experiment-card">
+      <div class="experiment-card-header"><div class="experiment-number">5</div><div><div style="font-weight:700;font-size:15px">Differential Privacy Epsilon Sweep</div><div style="font-size:12px;color:var(--text-secondary)">Explore the privacy-utility tradeoff curve</div></div><span style="margin-left:auto" class="badge badge-red">Privacy</span></div>
+      <div class="experiment-card-body"><div class="experiment-section-title">🎯 Objective</div><p style="font-size:13px;color:var(--text-secondary)">Use the DP Simulator to vary epsilon and observe the effect on model accuracy and gradient noise level.</p><div class="experiment-section-title">📋 Procedure</div><ol style="font-size:13px;color:var(--text-secondary);padding-left:18px;line-height:1.8"><li>Open Day 2 → Differential Privacy tab</li><li>Move the epsilon slider from 0.1 to 5.0</li><li>Record accuracy and noise level at each setting</li><li>Plot your own privacy-utility tradeoff curve</li><li>Identify your preferred operating point</li></ol><div style="margin-top:12px"><button class="btn btn-primary btn-sm" onclick="navigateTo('day2');setTimeout(()=>document.querySelector('[data-tab=dp]')?.click(),300)">Open DP Simulator</button></div></div>
+    </div>
+    <div class="experiment-card">
+      <div class="experiment-card-header"><div class="experiment-number">6</div><div><div style="font-weight:700;font-size:15px">Secure Aggregation Role Play</div><div style="font-size:12px;color:var(--text-secondary)">Understand masking protocol through simulation</div></div><span style="margin-left:auto" class="badge badge-yellow">Security</span></div>
+      <div class="experiment-card-body"><div class="experiment-section-title">🎯 Objective</div><p style="font-size:13px;color:var(--text-secondary)">Manually simulate the SecAgg masking protocol with 3 clients. Verify that the server can compute the sum without seeing individual updates.</p><div class="experiment-section-title">📋 Manual Exercise</div><div class="formula-box"><div style="font-family:var(--font-mono);font-size:12px;text-align:left;line-height:2">Client 1 update: 5 | Mask: +3 | Sends: 8<br>Client 2 update: 7 | Mask: -1 | Sends: 6<br>Client 3 update: 3 | Mask: -2 | Sends: 1<br><span style="color:var(--accent-green)">Server sum: 8+6+1=15 = True sum (5+7+3=15) ✅</span><br><span style="color:var(--accent-red)">Server cannot see: 5, 7, or 3 individually ❌</span></div></div></div>
+    </div>
+    <div class="experiment-card">
+      <div class="experiment-card-header"><div class="experiment-number">7</div><div><div style="font-weight:700;font-size:15px">Communication Cost Analysis</div><div style="font-size:12px;color:var(--text-secondary)">Quantify communication savings with compression</div></div><span style="margin-left:auto" class="badge badge-cyan">Efficiency</span></div>
+      <div class="experiment-card-body"><div class="experiment-section-title">🎯 Objective</div><p style="font-size:13px;color:var(--text-secondary)">Calculate and compare total communication cost with and without gradient compression across different FL configurations.</p><div style="margin-top:12px"><button class="btn btn-primary btn-sm" onclick="navigateTo('day2');setTimeout(()=>document.querySelector('[data-tab=comm]')?.click(),300)">Open Comm. Calculator</button></div></div>
+    </div>
+    <div class="experiment-card">
+      <div class="experiment-card-header"><div class="experiment-number">8</div><div><div style="font-weight:700;font-size:15px">Privacy-Utility Trade-off Sweet Spot</div><div style="font-size:12px;color:var(--text-secondary)">Find the optimal epsilon for your application</div></div><span style="margin-left:auto" class="badge badge-red">Privacy</span></div>
+      <div class="experiment-card-body"><div class="experiment-section-title">🎯 Objective</div><p style="font-size:13px;color:var(--text-secondary)">Run the Python script 08_privacy_utility_tradeoff.py to find the Pareto-optimal epsilon for different FL configurations.</p><div class="experiment-section-title">💡 Key Insight</div><p style="font-size:13px;color:var(--text-secondary)">There is no universally "correct" epsilon. Healthcare applications may accept lower accuracy for stronger privacy (ε~0.5-1.0). Consumer applications may use ε~5-10 for better utility. The right choice depends on your privacy requirements, regulatory constraints, and acceptable accuracy loss.</p></div>
+    </div>
+  </div>
+</div>
+
+<!-- ─────────────────────────────────────────────────────────────────────
+     MINI PROJECTS SECTION
+───────────────────────────────────────────────────────────────────── -->
+<div id="section-mini-projects" style="display:none">
+  <div class="section-title">💡 Mini Projects</div>
+  <div class="section-subtitle">8 Federated Learning project ideas for FDP participants</div>
+  <div class="grid-2" style="gap:16px">
+    <div class="project-card">
+      <div class="project-card-icon">🏥</div>
+      <div class="project-card-title">Federated Healthcare Prediction</div>
+      <div class="project-card-meta"><span class="badge badge-red">Healthcare</span><span class="badge badge-yellow">Medium</span><span class="badge badge-blue">DP</span></div>
+      <p style="font-size:12px;color:var(--text-secondary)">Multiple hospitals collaboratively train a patient readmission prediction model without sharing patient records. Each hospital trains locally on its patient data.</p>
+      <div class="project-section-title">Suggested Dataset</div><p style="font-size:12px;color:var(--text-secondary)">MIMIC-III (clinical, requires application), UCI Heart Disease, or synthetic patient data</p>
+      <div class="project-section-title">FL Approach</div><p style="font-size:12px;color:var(--text-secondary)">Cross-silo FL with 5 hospital clients, FedAvg aggregation, ε=1.0 differential privacy</p>
+      <div class="project-section-title">Evaluation</div><p style="font-size:12px;color:var(--text-secondary)">AUC-ROC, F1-score, privacy budget consumption, communication cost</p>
+    </div>
+    <div class="project-card">
+      <div class="project-card-icon">💳</div>
+      <div class="project-card-title">Federated Fraud Detection</div>
+      <div class="project-card-meta"><span class="badge badge-yellow">Finance</span><span class="badge badge-green">Beginner</span><span class="badge badge-blue">SecAgg</span></div>
+      <p style="font-size:12px;color:var(--text-secondary)">Banks collaborate to improve fraud detection without sharing customer transaction data. Cross-institution fraud patterns are captured through federated model updates.</p>
+      <div class="project-section-title">Suggested Dataset</div><p style="font-size:12px;color:var(--text-secondary)">Kaggle Credit Card Fraud Detection dataset (split among 5 simulated banks)</p>
+      <div class="project-section-title">FL Approach</div><p style="font-size:12px;color:var(--text-secondary)">Cross-silo FL, Random Forest or XGBoost with FL wrapper, class imbalance handling</p>
+      <div class="project-section-title">Evaluation</div><p style="font-size:12px;color:var(--text-secondary)">Precision, Recall, F1 for fraud class, False Positive Rate, communication efficiency</p>
+    </div>
+    <div class="project-card">
+      <div class="project-card-icon">🌡️</div>
+      <div class="project-card-title">Federated IoT Anomaly Detection</div>
+      <div class="project-card-meta"><span class="badge badge-green">IoT</span><span class="badge badge-green">Beginner</span><span class="badge badge-cyan">Edge FL</span></div>
+      <p style="font-size:12px;color:var(--text-secondary)">Industrial IoT sensors collaboratively detect equipment failure without sending raw sensor streams to the cloud. Edge FL enables low-latency responses.</p>
+      <div class="project-section-title">Suggested Dataset</div><p style="font-size:12px;color:var(--text-secondary)">UNSW-NB15, KDD Cup 1999, or simulate IoT sensor readings with numpy</p>
+      <div class="project-section-title">FL Approach</div><p style="font-size:12px;color:var(--text-secondary)">Cross-device FL simulation, autoencoder or isolation forest, local anomaly thresholds</p>
+    </div>
+    <div class="project-card">
+      <div class="project-card-icon">🎓</div>
+      <div class="project-card-title">Federated Student Performance Prediction</div>
+      <div class="project-card-meta"><span class="badge badge-blue">Education</span><span class="badge badge-green">Beginner</span><span class="badge badge-blue">DP</span></div>
+      <p style="font-size:12px;color:var(--text-secondary)">Universities collaboratively predict student performance and identify at-risk students without sharing student records across institutions.</p>
+      <div class="project-section-title">Suggested Dataset</div><p style="font-size:12px;color:var(--text-secondary)">UCI Student Performance (split into 3 simulated universities), Open University Learning Analytics</p>
+      <div class="project-section-title">FL Approach</div><p style="font-size:12px;color:var(--text-secondary)">Cross-silo FL, Logistic Regression or MLP, FERPA-compliant with DP</p>
+    </div>
+    <div class="project-card">
+      <div class="project-card-icon">💬</div>
+      <div class="project-card-title">Federated Sentiment Analysis</div>
+      <div class="project-card-meta"><span class="badge badge-purple">NLP</span><span class="badge badge-yellow">Medium</span><span class="badge badge-blue">DP</span></div>
+      <p style="font-size:12px;color:var(--text-secondary)">Multiple organizations (news outlets, social platforms) collaboratively train a sentiment classifier without sharing user-generated content.</p>
+      <div class="project-section-title">Suggested Dataset</div><p style="font-size:12px;color:var(--text-secondary)">IMDB Reviews, Twitter Sentiment140, Amazon Reviews (split by domain/source)</p>
+      <div class="project-section-title">FL Approach</div><p style="font-size:12px;color:var(--text-secondary)">Cross-silo FL with TF-IDF + Logistic Regression or DistilBERT fine-tuning (advanced)</p>
+    </div>
+    <div class="project-card">
+      <div class="project-card-icon">🖼️</div>
+      <div class="project-card-title">Federated Image Classification</div>
+      <div class="project-card-meta"><span class="badge badge-cyan">Vision</span><span class="badge badge-yellow">Medium</span><span class="badge badge-blue">FedAvg</span></div>
+      <p style="font-size:12px;color:var(--text-secondary)">Simulate FL on MNIST or CIFAR-10 across multiple clients with IID and Non-IID splits. Compare with centralized CNN baseline.</p>
+      <div class="project-section-title">Suggested Dataset</div><p style="font-size:12px;color:var(--text-secondary)">MNIST (handwritten digits), Fashion-MNIST, CIFAR-10 (split into 10 clients)</p>
+      <div class="project-section-title">FL Approach</div><p style="font-size:12px;color:var(--text-secondary)">Cross-device FL simulation, Simple CNN with PyTorch/TensorFlow, compare IID vs Non-IID</p>
+    </div>
+    <div class="project-card">
+      <div class="project-card-icon">🎯</div>
+      <div class="project-card-title">Privacy-Preserving Recommendation System</div>
+      <div class="project-card-meta"><span class="badge badge-yellow">RecSys</span><span class="badge badge-red">Advanced</span><span class="badge badge-red">HE/DP</span></div>
+      <p style="font-size:12px;color:var(--text-secondary)">Build a federated collaborative filtering system where user preferences never leave their devices. Ratings are kept private while the model improves globally.</p>
+      <div class="project-section-title">Suggested Dataset</div><p style="font-size:12px;color:var(--text-secondary)">MovieLens 100K (split users into clients), Book Ratings dataset</p>
+      <div class="project-section-title">FL Approach</div><p style="font-size:12px;color:var(--text-secondary)">Federated Matrix Factorization, local user embeddings, server aggregates item embeddings</p>
+    </div>
+    <div class="project-card">
+      <div class="project-card-icon">🔐</div>
+      <div class="project-card-title">Federated Intrusion Detection System</div>
+      <div class="project-card-meta"><span class="badge badge-red">Security</span><span class="badge badge-yellow">Medium</span><span class="badge badge-blue">SecAgg</span></div>
+      <p style="font-size:12px;color:var(--text-secondary)">Organizations collaboratively build a network intrusion detection model without sharing sensitive network traffic logs. Threat intelligence is shared through model updates.</p>
+      <div class="project-section-title">Suggested Dataset</div><p style="font-size:12px;color:var(--text-secondary)">CICIDS2017, NSL-KDD, UNSW-NB15 (split by organization type)</p>
+      <div class="project-section-title">FL Approach</div><p style="font-size:12px;color:var(--text-secondary)">Cross-silo FL, Random Forest or LSTM for sequence anomalies, Byzantine-robust aggregation</p>
+    </div>
+  </div>
+</div>
+
+<!-- ─────────────────────────────────────────────────────────────────────
+     QUIZ SECTION
+───────────────────────────────────────────────────────────────────── -->
+<div id="section-quiz" style="display:none">
+  <div class="section-title">❓ Knowledge Check</div>
+  <div class="section-subtitle">Test your understanding of Federated Learning concepts</div>
+  <div style="display:flex;gap:16px;align-items:flex-end;margin-bottom:20px;flex-wrap:wrap">
+    <div><label class="slider-label">Select Module</label>
+    <select id="quiz-module-select" style="background:var(--bg-secondary);border:1px solid var(--border-color);border-radius:var(--radius-sm);padding:8px 14px;color:var(--text-primary);font-size:13px;margin-top:4px">
+      <option value="fl-basics">FL Basics (10 questions)</option>
+      <option value="fedavg">FedAvg Deep Dive (5 questions)</option>
+      <option value="privacy">Privacy & DP (8 questions)</option>
+      <option value="security">Security Threats (5 questions)</option>
+      <option value="advanced">Advanced Topics (7 questions)</option>
+    </select></div>
+    <div style="flex:1">
+      <div class="progress-label"><span id="quiz-progress-text">0/0</span></div>
+      <div class="progress-bar-container"><div class="progress-bar" id="quiz-progress-fill" style="width:0%"></div></div>
+    </div>
+    <div id="quiz-score" style="font-size:13px;color:var(--text-muted)">Score: 0</div>
+  </div>
+  <div id="quiz-main">
+    <div id="quiz-container"></div>
+    <div style="display:flex;gap:10px;margin-top:16px">
+      <button class="btn btn-primary" id="quiz-submit" disabled>✅ Submit Answer</button>
+      <button class="btn btn-secondary" id="quiz-next" style="display:none">Next Question →</button>
+    </div>
+  </div>
+  <div id="quiz-results" style="display:none"></div>
+</div>
+
+<!-- ─────────────────────────────────────────────────────────────────────
+     RESEARCH CORNER SECTION
+───────────────────────────────────────────────────────────────────── -->
+<div id="section-research" style="display:none">
+  <div class="section-title">🔭 Research Corner</div>
+  <div class="section-subtitle">Open problems, research directions, and the FL ecosystem</div>
+
+  <div class="tab-nav">
+    <button class="tab-btn active" data-tab="problems" data-tab-group="research">Open Problems</button>
+    <button class="tab-btn" data-tab="directions" data-tab-group="research">Research Directions</button>
+    <button class="tab-btn" data-tab="ecosystem" data-tab-group="research">FL Ecosystem</button>
+    <button class="tab-btn" data-tab="challenges" data-tab-group="research">Current Challenges</button>
+  </div>
+
+  <div class="tab-pane active" data-tab="problems" data-tab-group="research">
+    <div class="grid-2" style="gap:12px">
+      <div class="card"><div class="card-title" style="margin-bottom:10px;color:var(--accent-red)">🔴 Non-IID Data & Convergence</div><p style="font-size:13px;color:var(--text-secondary)">How do we guarantee convergence when client data distributions are highly heterogeneous? FedProx, SCAFFOLD, FedNova address this partially but open challenges remain for extreme Non-IID scenarios.</p><div class="chip chip-blue" style="margin-top:8px">Active Research</div></div>
+      <div class="card"><div class="card-title" style="margin-bottom:10px;color:var(--accent-red)">🔴 Personalized Federated Learning</div><p style="font-size:13px;color:var(--text-secondary)">One global model may not be optimal for all clients. How do we train models that are personalized to each client while still benefiting from federation? pFedMe, per-FedAvg, FedPer explore this.</p><div class="chip chip-blue" style="margin-top:8px">Active Research</div></div>
+      <div class="card"><div class="card-title" style="margin-bottom:10px;color:var(--accent-yellow)">🟡 Fairness in FL</div><p style="font-size:13px;color:var(--text-secondary)">How do we ensure the global model is fair to all clients, including those with smaller datasets or minority class distributions? q-FFL, AgnosticFed, Fair Resource Allocation in FL.</p><div class="chip chip-yellow" style="margin-top:8px">Emerging</div></div>
+      <div class="card"><div class="card-title" style="margin-bottom:10px;color:var(--accent-yellow)">🟡 Federated LLMs</div><p style="font-size:13px;color:var(--text-secondary)">Training LLMs (GPT, BERT) in federated settings is challenging due to enormous model sizes and communication costs. Parameter-efficient FL (LoRA, adapters) is a promising direction.</p><div class="chip chip-red" style="margin-top:8px">Hot Topic</div></div>
+      <div class="card"><div class="card-title" style="margin-bottom:10px;color:var(--accent-blue)">🔵 Byzantine Robustness</div><p style="font-size:13px;color:var(--text-secondary)">How many malicious clients can a FL system tolerate? What aggregation algorithms provide formal Byzantine fault tolerance guarantees?</p><div class="chip chip-blue" style="margin-top:8px">Active Research</div></div>
+      <div class="card"><div class="card-title" style="margin-bottom:10px;color:var(--accent-blue)">🔵 Vertical Federated Learning</div><p style="font-size:13px;color:var(--text-secondary)">When clients share the same samples but different features (e.g., a bank and a hospital share patients but have different data), Vertical FL enables training without alignment disclosure.</p><div class="chip chip-blue" style="margin-top:8px">Active Research</div></div>
+      <div class="card"><div class="card-title" style="margin-bottom:10px">💡 Explainable FL</div><p style="font-size:13px;color:var(--text-secondary)">How do we explain global FL model decisions when the model was trained on distributed private data? Client-level explainability without revealing private data is an open problem.</p><div class="chip chip-yellow" style="margin-top:8px">Emerging</div></div>
+      <div class="card"><div class="card-title" style="margin-bottom:10px">💡 Federated Reinforcement Learning</div><p style="font-size:13px;color:var(--text-secondary)">Extending FL to reinforcement learning settings where multiple agents learn from distributed environments. Applications: autonomous vehicles, smart grid control, multi-robot systems.</p><div class="chip chip-yellow" style="margin-top:8px">Emerging</div></div>
+    </div>
+  </div>
+
+  <div class="tab-pane" data-tab="directions" data-tab-group="research">
+    <div class="grid-2" style="gap:12px">
+      <div class="card"><div class="card-title" style="margin-bottom:10px">🏥 Healthcare FL</div><p style="font-size:13px;color:var(--text-secondary)">FL for radiology (tumor detection across hospitals), drug discovery, genomics, electronic health records, and mental health prediction — all requiring strict HIPAA compliance.</p></div>
+      <div class="card"><div class="card-title" style="margin-bottom:10px">🌐 IoT & Edge FL</div><p style="font-size:13px;color:var(--text-secondary)">Training ML models on resource-constrained edge devices (microcontrollers, embedded systems). Model compression, TinyML, and asynchronous FL are key research areas.</p></div>
+      <div class="card"><div class="card-title" style="margin-bottom:10px">✨ Federated Generative AI</div><p style="font-size:13px;color:var(--text-secondary)">Training GANs and diffusion models in federated settings. FedGAN, Federated Stable Diffusion. Privacy risks of generative models in FL (membership inference on generated samples).</p></div>
+      <div class="card"><div class="card-title" style="margin-bottom:10px">📚 Federated Knowledge Distillation</div><p style="font-size:13px;color:var(--text-secondary)">Instead of sharing model weights, clients share predictions on unlabeled public data (soft labels). Enables heterogeneous model architectures across clients. FedDF, Ensemble Distillation for FL.</p></div>
+      <div class="card"><div class="card-title" style="margin-bottom:10px">🔗 Blockchain + FL</div><p style="font-size:13px;color:var(--text-secondary)">Using blockchain for decentralized FL coordination, incentive mechanisms, and audit trails. Eliminates the central server as a single point of failure and trust.</p></div>
+      <div class="card"><div class="card-title" style="margin-bottom:10px">🧬 Federated Meta-Learning</div><p style="font-size:13px;color:var(--text-secondary)">MAML-based approaches for FL: learn a global initialization that can be quickly adapted to any client's data distribution. Per-FedAvg, ARFL combine meta-learning with FL.</p></div>
+    </div>
+  </div>
+
+  <div class="tab-pane" data-tab="ecosystem" data-tab-group="research">
+    <div class="alert alert-info" style="margin-bottom:16px"><span class="alert-icon">ℹ️</span><span>All framework descriptions are <strong>conceptual overviews</strong>. Verify current versions and features at official documentation before production use.</span></div>
+    <div class="grid-2" style="gap:12px">
+      <div class="tech-stack-card"><div class="tech-logo">🌸</div><div class="tech-name">Flower (flwr)</div><div class="tech-type">Framework-agnostic FL</div><div class="tech-desc">The most popular open-source FL framework. Works with PyTorch, TensorFlow, JAX, scikit-learn. Simulation + real distributed modes. Strong community.</div><div style="margin-top:10px"><span class="badge badge-green">Recommended for beginners</span></div></div>
+      <div class="tech-stack-card"><div class="tech-logo">🧠</div><div class="tech-name">TensorFlow Federated</div><div class="tech-type">Google / TensorFlow</div><div class="tech-desc">Google's FL framework, tightly integrated with TF. High-level FL API for simulation. Production deployment tooling for cross-device FL. Based on Gboard production system.</div><div style="margin-top:10px"><span class="badge badge-blue">Production-grade</span></div></div>
+      <div class="tech-stack-card"><div class="tech-logo">🔷</div><div class="tech-name">OpenFL (Intel)</div><div class="tech-type">Enterprise FL</div><div class="tech-desc">Intel's open-source FL platform designed for cross-silo, enterprise deployments. Strong privacy features, integration with Intel SGX for hardware security.</div><div style="margin-top:10px"><span class="badge badge-yellow">Enterprise-focused</span></div></div>
+      <div class="tech-stack-card"><div class="tech-logo">🚀</div><div class="tech-name">NVIDIA FLARE</div><div class="tech-type">NVIDIA / Healthcare</div><div class="tech-desc">NVIDIA Federated Learning Application Runtime Environment. Designed for healthcare and life sciences FL. Integration with Clara (medical imaging) and RAPIDS.</div><div style="margin-top:10px"><span class="badge badge-red">Healthcare-focused</span></div></div>
+      <div class="tech-stack-card"><div class="tech-logo">🔏</div><div class="tech-name">PySyft</div><div class="tech-type">OpenMined / Privacy</div><div class="tech-desc">Privacy-focused ML framework with built-in DP, SecAgg, and HE. Remote execution model (data scientists query data without seeing it). PyTorch compatible.</div><div style="margin-top:10px"><span class="badge badge-purple">Privacy-first</span></div></div>
+      <div class="tech-stack-card"><div class="tech-logo">🌐</div><div class="tech-name">FedML</div><div class="tech-type">Research Platform</div><div class="tech-desc">Comprehensive FL research platform supporting simulation, distributed, mobile (Android/iOS), and IoT FL. Rich benchmark datasets and algorithms library.</div><div style="margin-top:10px"><span class="badge badge-cyan">Research-focused</span></div></div>
+    </div>
+  </div>
+
+  <div class="tab-pane" data-tab="challenges" data-tab-group="research">
+    <div class="grid-2" style="gap:12px">
+      <div class="card"><div class="card-title" style="margin-bottom:10px;color:var(--accent-red)">⚠️ Statistical Heterogeneity</div><p style="font-size:13px;color:var(--text-secondary)">Real-world data is Non-IID. Convergence proofs for FedAvg require IID assumptions. Addressing statistical heterogeneity without sacrificing convergence speed remains a key challenge.</p></div>
+      <div class="card"><div class="card-title" style="margin-bottom:10px;color:var(--accent-yellow)">📡 Communication Bottleneck</div><p style="font-size:13px;color:var(--text-secondary)">Uploading model updates is expensive, especially for LLMs with billions of parameters. The communication cost grows linearly with clients and rounds.</p></div>
+      <div class="card"><div class="card-title" style="margin-bottom:10px;color:var(--accent-red)">🔒 Privacy Guarantees</div><p style="font-size:13px;color:var(--text-secondary)">FL alone does not guarantee privacy. Gradient leakage shows raw data can be reconstructed from gradients. DP is necessary but introduces accuracy costs.</p></div>
+      <div class="card"><div class="card-title" style="margin-bottom:10px;color:var(--accent-yellow)">⚖️ Incentive Design</div><p style="font-size:13px;color:var(--text-secondary)">Why would organizations participate in FL if they already have good local models? Designing fair incentive mechanisms to encourage honest, quality contributions is an open economic problem.</p></div>
+      <div class="card"><div class="card-title" style="margin-bottom:10px">🔬 Reproducibility</div><p style="font-size:13px;color:var(--text-secondary)">FL experiments are hard to reproduce due to the distributed nature, device variability, and dependence on real-world data. Standardized benchmarks (LEAF, FedScale) are being developed.</p></div>
+      <div class="card"><div class="card-title" style="margin-bottom:10px">⚙️ System Heterogeneity</div><p style="font-size:13px;color:var(--text-secondary)">Clients have vastly different compute, memory, and bandwidth. One-size-fits-all models may not work. Techniques like split learning, model compression, and asynchronous FL address this.</p></div>
+    </div>
+  </div>
+</div>
+
+<!-- ─────────────────────────────────────────────────────────────────────
+     RESOURCES SECTION
+───────────────────────────────────────────────────────────────────── -->
+<div id="section-resources" style="display:none">
+  <div class="section-title">📚 Resource Library</div>
+  <div class="section-subtitle">FDP materials, references, and tools</div>
+  <div style="display:flex;gap:12px;margin-bottom:20px;flex-wrap:wrap">
+    <div class="search-bar" style="flex:1;min-width:200px"><span class="search-icon">🔍</span><input type="text" placeholder="Search resources..." id="resource-search"></div>
+    <div style="display:flex;gap:6px;flex-wrap:wrap">
+      <button class="btn btn-primary btn-sm active" data-filter="all">All</button>
+      <button class="btn btn-ghost btn-sm" data-filter="Python">Python</button>
+      <button class="btn btn-ghost btn-sm" data-filter="Framework">Frameworks</button>
+      <button class="btn btn-ghost btn-sm" data-filter="Dataset">Datasets</button>
+      <button class="btn btn-ghost btn-sm" data-filter="Paper">Papers</button>
+      <button class="btn btn-ghost btn-sm" data-filter="Tool">Tools</button>
+    </div>
+  </div>
+  <div id="resource-list" style="display:flex;flex-direction:column;gap:10px">
+    <div style="text-align:center;padding:32px;color:var(--text-muted)">Loading resources from config...</div>
+  </div>
+  <div class="alert alert-info" style="margin-top:20px"><span class="alert-icon">ℹ️</span><span>Additional resources will be added during the FDP. Edit <code>js/config.js</code> to add more resources without changing the portal code.</span></div>
+</div>
+
+<!-- ─────────────────────────────────────────────────────────────────────
+     FEEDBACK SECTION
+───────────────────────────────────────────────────────────────────── -->
+<div id="section-feedback" style="display:none">
+  <div class="section-title">💬 Session Feedback</div>
+  <div class="section-subtitle">Share your feedback on the FDP session</div>
+  <div class="alert alert-info" style="margin-bottom:20px"><span class="alert-icon">🔒</span><span>Feedback is stored locally on your device only. No data is sent to any server.</span></div>
+  <div id="feedback-thankyou" style="display:none;text-align:center;padding:48px">
+    <div style="font-size:48px;margin-bottom:16px">🙏</div>
+    <h2 style="color:var(--accent-green);margin-bottom:8px">Thank you for your feedback!</h2>
+    <p style="color:var(--text-secondary)">Your response has been saved locally. We appreciate your time.</p>
+    <button class="btn btn-primary" style="margin-top:16px" onclick="document.getElementById('feedback-form').style.display='block';document.getElementById('feedback-thankyou').style.display='none'">Submit Another</button>
+  </div>
+  <form id="feedback-form" class="feedback-form">
+    <div class="grid-2" style="gap:24px">
+      <div class="card">
+        <div class="card-title" style="margin-bottom:16px">⭐ Rate the Session</div>
+        <div style="display:flex;flex-direction:column;gap:16px">
+          <div class="form-group"><label class="form-label">Content Quality</label><div class="slider-container"><input type="range" class="interactive-slider" min="1" max="5" value="4" data-feedback-rating="content_quality"><div style="display:flex;justify-content:space-between;font-size:10px;color:var(--text-muted);margin-top:4px"><span>Poor</span><span>Excellent</span></div></div></div>
+          <div class="form-group"><label class="form-label">Presentation Clarity</label><div class="slider-container"><input type="range" class="interactive-slider" min="1" max="5" value="4" data-feedback-rating="clarity"><div style="display:flex;justify-content:space-between;font-size:10px;color:var(--text-muted);margin-top:4px"><span>Unclear</span><span>Very Clear</span></div></div></div>
+          <div class="form-group"><label class="form-label">Interactivity & Demos</label><div class="slider-container"><input type="range" class="interactive-slider" min="1" max="5" value="4" data-feedback-rating="interactivity"><div style="display:flex;justify-content:space-between;font-size:10px;color:var(--text-muted);margin-top:4px"><span>Poor</span><span>Excellent</span></div></div></div>
+          <div class="form-group"><label class="form-label">Session Pacing</label><div class="slider-container"><input type="range" class="interactive-slider" min="1" max="5" value="3" data-feedback-rating="pacing"><div style="display:flex;justify-content:space-between;font-size:10px;color:var(--text-muted);margin-top:4px"><span>Too slow</span><span>Too fast</span></div></div></div>
+          <div class="form-group"><label class="form-label">Overall Satisfaction</label><div class="slider-container"><input type="range" class="interactive-slider" min="1" max="5" value="4" data-feedback-rating="overall"><div style="display:flex;justify-content:space-between;font-size:10px;color:var(--text-muted);margin-top:4px"><span>Poor</span><span>Excellent</span></div></div></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title" style="margin-bottom:16px">✍️ Written Feedback</div>
+        <div class="form-group"><label class="form-label">Most useful concept from this session:</label><textarea data-feedback-comment="most_useful" placeholder="E.g., FedAvg formula, the FL simulator, differential privacy demo..."></textarea></div>
+        <div class="form-group"><label class="form-label">Suggestions for improvement:</label><textarea data-feedback-comment="suggestions" placeholder="E.g., more time on experiments, more Python examples..."></textarea></div>
+        <div class="form-group"><label class="form-label">Questions for the next session:</label><textarea data-feedback-comment="questions" placeholder="Any FL concepts you'd like explored further..."></textarea></div>
+        <button type="submit" class="btn btn-primary btn-full" style="margin-top:8px">📨 Submit Feedback</button>
+      </div>
+    </div>
+  </form>
+</div>
+
+</main>
+
+<!-- ─────────────────────────────────────────────────────────────────────
+     PRESENTER TOOLBAR
+───────────────────────────────────────────────────────────────────── -->
+<div class="presenter-toolbar" id="presenter-toolbar">
+  <div class="presenter-nav">
+    <button class="btn btn-ghost btn-sm" id="pres-prev">← Prev</button>
+    <span class="presenter-section-info" id="pres-section-info">Home</span>
+    <button class="btn btn-ghost btn-sm" id="pres-next">Next →</button>
+  </div>
+  <div class="presenter-quick-actions">
+    <button class="btn btn-warning btn-sm" data-goto="fl-lab">⚙️ FL Simulator</button>
+    <button class="btn btn-secondary btn-sm" data-goto="python-lab">🐍 Python</button>
+    <button class="btn btn-secondary btn-sm" data-goto="quiz">❓ Quiz</button>
+  </div>
+  <div style="font-family:var(--font-mono);font-size:13px;color:var(--accent-cyan)" id="pres-timer">--:--:--</div>
+  <button class="btn btn-danger btn-sm" id="pres-exit">✕ Exit Presenter</button>
+</div>
+
+<!-- Toast notification -->
+<div class="toast" id="notification-toast"></div>
+
+<!-- Modal overlay -->
+<div class="modal-overlay" id="modal-overlay" onclick="this.classList.remove('open')">
+  <div class="modal-panel" onclick="event.stopPropagation()" id="modal-panel">
+    <div class="modal-header">
+      <div class="modal-title" id="modal-title">Modal</div>
+      <button class="modal-close" onclick="document.getElementById('modal-overlay').classList.remove('open')">×</button>
+    </div>
+    <div id="modal-body"></div>
+  </div>
+</div>
+
+<!-- Scripts -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/python.min.js"></script>
+<script src="js/config.js"></script>
+<script src="js/charts.js"></script>
+<script src="js/animations.js"></script>
+<script src="js/fl-simulator.js"></script>
+<script src="js/dp-simulator.js"></script>
+<script src="js/quiz.js"></script>
+<script src="js/code-lab.js"></script>
+<script src="js/timer.js"></script>
+<script src="js/app.js"></script>
+
+<script>
+// Inline helpers that bridge HTML controls and JS modules
+function showDataDist(mode) {
+  if (window.FLSimulator) FLSimulator.showNonIIDChart(mode);
+}
+function startLabSimulation() {
+  const cfg = {
+    numClients: parseInt(document.getElementById('lab-clients').value),
+    numRounds: parseInt(document.getElementById('lab-rounds').value),
+    localEpochs: parseInt(document.getElementById('lab-epochs').value),
+    distribution: document.getElementById('lab-distribution').value,
+    outputRound: 'lab-round',
+    outputAcc: 'lab-acc',
+    chartId: 'lab-accuracy-chart'
+  };
+  if (window.FLSimulator) FLSimulator.startLab(cfg);
+}
+function resetLabSimulation() {
+  if (window.FLSimulator) FLSimulator.resetLab();
+}
+
+// Slider value display wiring
+document.addEventListener('DOMContentLoaded', () => {
+  const sliderPairs = [
+    ['fl-sim-clients','fl-sim-clients-val',''],
+    ['fl-sim-rounds','fl-sim-rounds-val',''],
+    ['fl-sim-epochs','fl-sim-epochs-val',''],
+    ['fl-sim-lr','fl-sim-lr-val', v => (v/1000).toFixed(3)],
+    ['lab-clients','lab-clients-val',''],
+    ['lab-rounds','lab-rounds-val',''],
+    ['lab-epochs','lab-epochs-val',''],
+    ['comm-clients','comm-clients-val',''],
+    ['comm-rounds','comm-rounds-val',''],
+    ['comm-compression','comm-compression-val', v => v+'×'],
+    ['dp-noise-slider','dp-epsilon-display', v => (v/20).toFixed(2)]
+  ];
+  sliderPairs.forEach(([sliderId, valId, fmt]) => {
+    const slider = document.getElementById(sliderId);
+    const valEl  = document.getElementById(valId);
+    if (!slider || !valEl) return;
+    const update = () => {
+      valEl.textContent = typeof fmt === 'function' ? fmt(slider.value) : slider.value;
+    };
+    slider.addEventListener('input', update);
+    update();
+  });
+  // DP slider also triggers DPSimulator
+  document.getElementById('dp-noise-slider')?.addEventListener('input', (e) => {
+    if (window.DPSimulator) DPSimulator.updateEpsilon(parseFloat(e.target.value) / 20);
+  });
+  // Highlight.js init
+  if (window.hljs) hljs.highlightAll();
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,247 @@
+/* ============================================================
+   REVA University FDP Portal — animations.css
+   Federated Learning for Secure and Distributed AI Systems
+   ============================================================ */
+
+/* ── Base entrance transitions ───────────────────────────── */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(24px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes fadeInDown {
+  from { opacity: 0; transform: translateY(-24px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes fadeInLeft {
+  from { opacity: 0; transform: translateX(-32px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+@keyframes fadeInRight {
+  from { opacity: 0; transform: translateX(32px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+@keyframes scaleIn {
+  from { opacity: 0; transform: scale(0.88); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+/* ── Section visibility ──────────────────────────────────── */
+.section-enter { animation: fadeInUp 0.4s ease both; }
+.section-enter-fast { animation: fadeIn 0.2s ease both; }
+
+/* ── Pulse / glow ────────────────────────────────────────── */
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.55; }
+}
+@keyframes pulseBorder {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(59,130,246,0.4); }
+  50%       { box-shadow: 0 0 0 8px rgba(59,130,246,0); }
+}
+@keyframes glowBlue {
+  0%, 100% { box-shadow: 0 0 10px rgba(59,130,246,0.2); }
+  50%       { box-shadow: 0 0 28px rgba(59,130,246,0.6); }
+}
+@keyframes glowGreen {
+  0%, 100% { box-shadow: 0 0 10px rgba(16,185,129,0.2); }
+  50%       { box-shadow: 0 0 28px rgba(16,185,129,0.5); }
+}
+@keyframes glowYellow {
+  0%, 100% { box-shadow: 0 0 10px rgba(245,158,11,0.2); }
+  50%       { box-shadow: 0 0 28px rgba(245,158,11,0.5); }
+}
+
+/* ── Float ───────────────────────────────────────────────── */
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50%       { transform: translateY(-8px); }
+}
+.float { animation: float 3s ease-in-out infinite; }
+
+/* ── Spin / Loader ───────────────────────────────────────── */
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+.spinner {
+  width: 28px; height: 28px;
+  border: 3px solid var(--border-light);
+  border-top-color: var(--accent-blue);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  display: inline-block;
+}
+
+/* ── Data flow dots (FL animation) ──────────────────────── */
+@keyframes dataFlowRight {
+  0%   { stroke-dashoffset: 200; opacity: 0; }
+  10%  { opacity: 1; }
+  90%  { opacity: 1; }
+  100% { stroke-dashoffset: 0;   opacity: 0; }
+}
+@keyframes dataFlowUp {
+  0%   { stroke-dashoffset: 150; opacity: 0; }
+  10%  { opacity: 1; }
+  90%  { opacity: 1; }
+  100% { stroke-dashoffset: 0;   opacity: 0; }
+}
+@keyframes dataFlowDown {
+  0%   { stroke-dashoffset: 0;   opacity: 0; }
+  10%  { opacity: 1; }
+  90%  { opacity: 1; }
+  100% { stroke-dashoffset: 150; opacity: 0; }
+}
+.anim-flow-right { animation: dataFlowRight 2s ease-in-out infinite; }
+.anim-flow-up    { animation: dataFlowUp    2s ease-in-out infinite; }
+.anim-flow-down  { animation: dataFlowDown  2s ease-in-out infinite; }
+
+/* ── Node activation ─────────────────────────────────────── */
+@keyframes nodeActivate {
+  0%   { r: 18; fill-opacity: 0.7; }
+  50%  { r: 24; fill-opacity: 1;   }
+  100% { r: 18; fill-opacity: 0.7; }
+}
+@keyframes nodeTraining {
+  0%, 100% { stroke-width: 2; }
+  50%       { stroke-width: 5; }
+}
+.node-active   { animation: nodeActivate  1.2s ease-in-out infinite; }
+.node-training { animation: nodeTraining  0.8s ease-in-out infinite; }
+
+/* ── Round complete flash ────────────────────────────────── */
+@keyframes roundComplete {
+  0%   { background: var(--bg-card); }
+  30%  { background: rgba(16,185,129,0.25); }
+  100% { background: var(--bg-card); }
+}
+.round-complete { animation: roundComplete 0.6s ease both; }
+
+/* ── Training progress bar animated stripe ───────────────── */
+@keyframes progressStripe {
+  0%   { background-position: 40px 0; }
+  100% { background-position: 0 0; }
+}
+.progress-bar-animated {
+  background-image: linear-gradient(
+    45deg,
+    rgba(255,255,255,0.1) 25%,
+    transparent 25%,
+    transparent 50%,
+    rgba(255,255,255,0.1) 50%,
+    rgba(255,255,255,0.1) 75%,
+    transparent 75%,
+    transparent
+  );
+  background-size: 40px 40px;
+  animation: progressStripe 1s linear infinite;
+}
+
+/* ── Staggered card entrance ─────────────────────────────── */
+.stagger-1 { animation-delay: 0.05s; }
+.stagger-2 { animation-delay: 0.10s; }
+.stagger-3 { animation-delay: 0.15s; }
+.stagger-4 { animation-delay: 0.20s; }
+.stagger-5 { animation-delay: 0.25s; }
+.stagger-6 { animation-delay: 0.30s; }
+
+/* ── Hover lift on cards ─────────────────────────────────── */
+.hover-lift {
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+.hover-lift:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 40px rgba(0,0,0,0.5);
+}
+
+/* ── Gradient text shimmer ───────────────────────────────── */
+@keyframes shimmer {
+  0%   { background-position: -200% center; }
+  100% { background-position:  200% center; }
+}
+.shimmer-text {
+  background: linear-gradient(90deg, var(--accent-blue), var(--accent-cyan), var(--accent-blue));
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: shimmer 3s linear infinite;
+}
+
+/* ── Hero entrance ───────────────────────────────────────── */
+.hero-title    { animation: fadeInUp   0.7s 0.1s ease both; }
+.hero-subtitle { animation: fadeInUp   0.7s 0.25s ease both; }
+.hero-cta      { animation: fadeInUp   0.7s 0.4s ease both; }
+.hero-card     { animation: scaleIn    0.5s 0.5s ease both; }
+
+/* ── Timeline dot bounce ─────────────────────────────────── */
+@keyframes dotBounce {
+  0%, 100% { transform: scale(1); }
+  50%       { transform: scale(1.3); }
+}
+.timeline-dot-active { animation: dotBounce 1s ease-in-out infinite; }
+
+/* ── Quiz feedback ───────────────────────────────────────── */
+@keyframes correctFlash {
+  0%   { background: var(--bg-card); }
+  30%  { background: rgba(16,185,129,0.3); }
+  100% { background: rgba(16,185,129,0.1); }
+}
+@keyframes incorrectFlash {
+  0%   { background: var(--bg-card); }
+  30%  { background: rgba(239,68,68,0.3); }
+  100% { background: rgba(239,68,68,0.1); }
+}
+.quiz-correct   { animation: correctFlash   0.5s ease both; }
+.quiz-incorrect { animation: incorrectFlash 0.5s ease both; }
+
+/* ── Notification toast ──────────────────────────────────── */
+@keyframes toastIn {
+  from { opacity: 0; transform: translateX(120%); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+@keyframes toastOut {
+  from { opacity: 1; transform: translateX(0); }
+  to   { opacity: 0; transform: translateX(120%); }
+}
+.toast-enter { animation: toastIn  0.3s ease both; }
+.toast-exit  { animation: toastOut 0.3s ease both; }
+
+/* ── SVG path draw ───────────────────────────────────────── */
+@keyframes drawPath {
+  from { stroke-dashoffset: 1000; }
+  to   { stroke-dashoffset: 0; }
+}
+.draw-path {
+  stroke-dasharray: 1000;
+  stroke-dashoffset: 1000;
+  animation: drawPath 1.5s ease forwards;
+}
+
+/* ── Packet/dot moving along SVG path ───────────────────── */
+@keyframes moveAlongPath {
+  0%   { offset-distance: 0%;   opacity: 0; }
+  5%   { opacity: 1; }
+  95%  { opacity: 1; }
+  100% { offset-distance: 100%; opacity: 0; }
+}
+.packet-dot {
+  offset-rotate: 0deg;
+  animation: moveAlongPath 2s ease-in-out infinite;
+}
+
+/* ── Accordion expand/collapse ───────────────────────────── */
+.accordion-content {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.4s ease, padding 0.3s ease;
+}
+.accordion-content.open {
+  max-height: 2000px;
+}
+
+/* ── Chart canvas fade ───────────────────────────────────── */
+canvas { animation: fadeIn 0.5s ease both; }
